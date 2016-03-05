@@ -12,7 +12,7 @@ import java.util.*
  * @author Dean Bassett
  */
 class Channel(id: String, name: String, created: Instant, archived: Boolean, general: Boolean, members: List<User>?,
-              topic: Channel.OwnedString, purpose: Channel.OwnedString) {
+              topic: OwnedString, purpose: OwnedString) {
     val id = id;
     val name = name;
 
@@ -120,11 +120,5 @@ class Channel(id: String, name: String, created: Instant, archived: Boolean, gen
         }
     }
 
-    data class OwnedString(val value: String, val owner: User, val setAt: Instant) {
-        private constructor(value: JsonElement, owner: JsonElement, time: JsonElement) :
-        this(value.asString, User[owner.asString]!!, Instant.ofEpochSecond(time.asLong))
-
-        constructor(json: JsonObject) : this(json["value"], json["owner"], json["last_set"]);
-    }
 }
 

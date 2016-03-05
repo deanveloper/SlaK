@@ -12,7 +12,7 @@ import javax.imageio.ImageIO
  *
  * @author Dean Bassett
  */
-data class User(val id: String, val name: String, val deleted: Boolean, val color: Color, val profile: Profile,
+class User(val id: String, val name: String, val deleted: Boolean, val color: Color, val profile: Profile,
            val isAdmin: Boolean, val isOwner: Boolean, val has2FA: Boolean, val hasFiles: Boolean) {
 
     init {
@@ -40,8 +40,10 @@ data class User(val id: String, val name: String, val deleted: Boolean, val colo
 
     data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
                   val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
-        lateinit var imageSmall: Image;
-        lateinit var imageLarge: Image;
+        lateinit var imageSmall: Image
+            private set;
+        lateinit var imageLarge: Image
+            private set;
 
         init {
             SlackAPI.executor.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
