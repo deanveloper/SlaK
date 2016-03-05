@@ -15,7 +15,7 @@ data class Channel(val id: String, val name: String, val created: Instant, val a
                    val general: Boolean, val members: List<User>?, val topic: Channel.OwnedString,
                    val purpose: Channel.OwnedString) {
     init {
-        channels[if(name.startsWith('@')) name else "#$name"] = this;
+        channels[if (name.startsWith('@')) name else "#$name"] = this;
         channels[id] = this;
     }
 
@@ -23,7 +23,6 @@ data class Channel(val id: String, val name: String, val created: Instant, val a
             Instant.ofEpochSecond(json["created"].asLong), json["is_archived"].asBoolean,
             json["is_general"].asBoolean, toUserList(json["members"]?.asJsonArray),
             OwnedString(json["topic"].asJsonObject), OwnedString(json["purpose"].asJsonObject));
-
 
     companion object {
         //stores the id (ie B5LD982) and the name (ie #random)
@@ -64,6 +63,18 @@ data class Channel(val id: String, val name: String, val created: Instant, val a
 
         SlackAPI.runMethod("channels.history", *params.toTypedArray()) {
             cb.invoke(it["messages"].asJsonArray.map { OwnedString(it.asJsonObject) });
+        }
+    }
+
+    fun invite(user: User, cb: ((Channel) -> Unit)? = null) {
+        SlackAPI.runMethod("channels.invite", "token" to SlackAPI.TOKEN, "channel" to id, "user" to user.id) { json ->
+            cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
+        }
+    }
+
+    fun join(cb: ((Channel) -> Unit)? = null) {
+        SlackAPI.runMethod("channels.join", "token" to SlackAPI.TOKEN, "name" to name) { json ->
+            cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
         }
     }
 

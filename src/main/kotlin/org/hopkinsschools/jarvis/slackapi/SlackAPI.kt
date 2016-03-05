@@ -1,6 +1,5 @@
 package org.hopkinsschools.jarvis.slackapi
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.BufferedReader
@@ -21,18 +20,26 @@ object SlackAPI {
     val executor = Executors.newCachedThreadPool();
     val parser = JsonParser();
 
-    fun runMethod (method: String, vararg params: Pair<String, String>, cb: ((JsonObject) -> Unit)? = null) {
+    fun runMethod(method: String, vararg params: Pair<String, String>, onError: ((String) -> Unit)? = null,
+                  onWarning: ((String) -> Unit)? = null, cb: ((JsonObject) -> Unit)? = null) {
         executor.submit {
             try {
                 val website = URL(BASE_URL + method + params.format()).openConnection();
                 val reader = BufferedReader(InputStreamReader(website.inputStream));
 
                 val json = parser.parse(reader).asJsonObject;
-                if(json["ok"].asBoolean)
-                    cb?.invoke(json);
-                else
-                    runMethod("chat.postMessage", Pair("token", TOKEN), Pair("channel", Channel["#random"]!!.id),
-                            Pair("text", "Server side error!\n${json["error"].asString}"));
+                if (json["ok"].asBoolean) {
+                    cb?.invoke(json)
+                } else {
+                    if (onError == null)
+                        runMethod("chat.postMessage", Pair("token", TOKEN), Pair("channel", Channel["#random"]!!.id),
+                                Pair("text", "Server side error!\n${json["error"].asString}"));
+                    else
+                        onError.invoke(json["error"].asString);
+                }
+
+                //if there's a warning, invoke onWarning
+                json["warning"]?.let { onWarning?.invoke(it.asString) };
             } catch (e: Exception) {
                 val sw = StringWriter();
                 e.printStackTrace(PrintWriter(sw));
@@ -47,7 +54,7 @@ object SlackAPI {
     private fun Array<out Pair<String, String>>.format(): String {
         val sb = StringBuilder("?");
 
-        for((key, value) in this) {
+        for ((key, value) in this) {
             sb.append("$key&$value");
             sb.append('&');
         }
