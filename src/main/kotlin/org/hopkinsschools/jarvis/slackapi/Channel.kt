@@ -11,9 +11,23 @@ import java.util.*
  *
  * @author Dean Bassett
  */
-data class Channel(val id: String, val name: String, val created: Instant, val archived: Boolean,
-                   val general: Boolean, val members: List<User>?, val topic: Channel.OwnedString,
-                   val purpose: Channel.OwnedString) {
+class Channel(id: String, name: String, created: Instant, archived: Boolean, general: Boolean, members: List<User>?,
+              topic: Channel.OwnedString, purpose: Channel.OwnedString) {
+    val id = id;
+    val name = name;
+
+    val created = created;
+    val general = general;
+    var archived = archived
+        private set;
+
+    val members = members;
+
+    var topic: OwnedString = topic
+        private set;
+    var purpose: OwnedString = purpose
+        private set;
+
     init {
         channels[if (name.startsWith('@')) name else "#$name"] = this;
         channels[id] = this;
@@ -91,6 +105,20 @@ data class Channel(val id: String, val name: String, val created: Instant, val a
     }
 
     fun list() = setOf(*channels.values.toTypedArray());
+
+    fun setPurpose(purpose: String, cb: ((String) -> Unit)?) {
+        SlackAPI.runMethod("channels.setPurpose", "token" to SlackAPI.TOKEN, "channel" to id, "purpose" to purpose) {
+            json ->
+            cb?.invoke(json["purpose"].asString);
+        }
+    }
+
+    fun setTopic(topic: String, cb: ((String) -> Unit)?) {
+        SlackAPI.runMethod("channels.setTopic", "token" to SlackAPI.TOKEN, "channel" to id, "topic" to topic) {
+            json ->
+            cb?.invoke(json["topic"].asString);
+        }
+    }
 
     data class OwnedString(val value: String, val owner: User, val setAt: Instant) {
         private constructor(value: JsonElement, owner: JsonElement, time: JsonElement) :
