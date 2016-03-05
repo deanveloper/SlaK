@@ -78,6 +78,20 @@ data class Channel(val id: String, val name: String, val created: Instant, val a
         }
     }
 
+    fun kick(user: User, cb: (() -> Unit)? = null) {
+        SlackAPI.runMethod("channels.kick", "token" to SlackAPI.TOKEN, "channel" to id, "user" to user.id) { json ->
+            cb?.invoke();
+        }
+    }
+
+    fun leave(cb: (() -> Unit)?) {
+        SlackAPI.runMethod("channels.leave", "token" to SlackAPI.TOKEN, "channel" to id) { json ->
+            cb?.invoke();
+        }
+    }
+
+    fun list() = setOf(*channels.values.toTypedArray());
+
     data class OwnedString(val value: String, val owner: User, val setAt: Instant) {
         private constructor(value: JsonElement, owner: JsonElement, time: JsonElement) :
         this(value.asString, User[owner.asString]!!, Instant.ofEpochSecond(time.asLong))
