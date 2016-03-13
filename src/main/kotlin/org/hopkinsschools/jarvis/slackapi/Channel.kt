@@ -3,6 +3,7 @@ package org.hopkinsschools.jarvis.slackapi
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import org.hopkinsschools.jarvis.slackapi.message.OwnedString
 import java.time.Instant
 import java.util.*
 

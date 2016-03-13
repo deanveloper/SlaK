@@ -1,4 +1,4 @@
-package org.hopkinsschools.jarvis.slackapi.item
+package org.hopkinsschools.jarvis.slackapi.message
 
 class SlackFile {
     init {

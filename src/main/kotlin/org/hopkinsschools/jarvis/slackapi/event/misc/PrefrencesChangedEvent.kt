@@ -1,7 +1,9 @@
 package org.hopkinsschools.jarvis.slackapi.event.misc
 
 import org.hopkinsschools.jarvis.slackapi.event.Event
-import org.hopkinsschools.jarvis.slackapi.event.EventHandler
 import java.time.Instant
 
-class PrefrencesChangedEvent(ts: Instant) : Event("pref_change", ts)
+class PrefrencesChangedEvent(ts: Instant) : Event {
+    override val name = "pref_change";
+    override val ts = ts;
+}
