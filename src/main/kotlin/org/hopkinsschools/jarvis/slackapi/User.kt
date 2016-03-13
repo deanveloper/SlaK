@@ -8,7 +8,7 @@ import java.util.*
 import javax.imageio.ImageIO
 
 /**
- * Placeholder class
+ * Represents a slack user
  *
  * @author Dean Bassett
  */
