@@ -17,12 +17,11 @@ import java.util.concurrent.Executors
 object SlackAPI {
     const val TOKEN = "";
     const val BASE_URL = "https://2239technocrats.slack.com/api/";
-    val executor = Executors.newCachedThreadPool();
     val parser = JsonParser();
 
     fun runMethod(method: String, vararg params: Pair<String, String>, onError: ((String) -> Unit)? = null,
                   onWarning: ((String) -> Unit)? = null, cb: ((JsonObject) -> Unit)? = null) {
-        executor.submit {
+        SlackScheduler.submit {
             try {
                 val website = URL(BASE_URL + method + params.format()).openConnection();
                 val reader = BufferedReader(InputStreamReader(website.inputStream));
@@ -50,7 +49,6 @@ object SlackAPI {
             }
         }
     }
-
     private fun Array<out Pair<String, String>>.format(): String {
         val sb = StringBuilder("?");
 

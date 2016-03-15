@@ -5,7 +5,10 @@ import java.awt.Color
 import java.awt.Image
 import java.net.URL
 import java.util.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.imageio.ImageIO
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  * Represents a slack user
@@ -16,8 +19,15 @@ class User(val id: String, val name: String, val deleted: Boolean, val color: Co
            val isAdmin: Boolean, val isOwner: Boolean, val has2FA: Boolean, val hasFiles: Boolean) {
 
     init {
-        users[if (name.startsWith('@')) name else "@$name"] = this;
-        users[id] = this;
+        if(lock.isWriteLockedByCurrentThread) {
+            users[if (name.startsWith('@')) name else "@$name"] = this;
+            users[id] = this;
+        } else {
+            lock.write {
+                users[if (name.startsWith('@')) name else "@$name"] = this;
+                users[id] = this;
+            }
+        }
     }
 
     constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString, json["deleted"].asBoolean,
@@ -27,12 +37,20 @@ class User(val id: String, val name: String, val deleted: Boolean, val color: Co
 
     companion object {
         private val users = HashMap<String, User>();
-        operator fun get(index: String): User? = users[index];
+        private val lock = ReentrantReadWriteLock();
+
+        operator fun get(index: String): User? {
+            lock.read {
+                return users[index]; //inline lambda, `return` returns to `get` method
+            }
+        }
 
         fun register() {
             SlackAPI.runMethod("users.list", Pair("token", SlackAPI.TOKEN)) {
-                for (json in it["members"].asJsonArray) {
-                    User(json.asJsonObject);
+                lock.write {
+                    for (json in it["members"].asJsonArray) {
+                        User(json.asJsonObject);
+                    }
                 }
             }
         }
@@ -46,8 +64,8 @@ class User(val id: String, val name: String, val deleted: Boolean, val color: Co
             private set;
 
         init {
-            SlackAPI.executor.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
-            SlackAPI.executor.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
+            SlackScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
+            SlackScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
         }
 
         constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,
