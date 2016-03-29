@@ -61,7 +61,7 @@ class Channel private constructor(val id: String,
     //channels.archive cannot be called by a bot
 
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
-                unreads: Boolean = false, cb: (List<OwnedString>) -> Unit) {
+                unreads: Boolean = false, cb: (List<Message<*>>) -> Unit) {
         var params = ArrayList<Pair<String, String>>(5);
         params.add(Pair("token", SlackAPI.TOKEN));
         params.add(Pair("channel", id));

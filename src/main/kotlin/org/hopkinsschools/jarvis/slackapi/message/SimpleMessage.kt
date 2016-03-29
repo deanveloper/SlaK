@@ -1,6 +1,7 @@
 package org.hopkinsschools.jarvis.slackapi.message
 
 import com.google.gson.JsonObject
+import org.hopkinsschools.jarvis.slackapi.SlackAPI.getAsTimestamp
 import org.hopkinsschools.jarvis.slackapi.User
 import java.time.LocalDateTime
 
@@ -12,8 +13,8 @@ import java.time.LocalDateTime
 final class SimpleMessage private constructor(owner: User,
                                               message: String,
                                               ts: LocalDateTime,
-                                              starred: Boolean = false,
-                                              reactions: Array<Message.Reaction> = emptyArray()
+                                              starred: Boolean,
+                                              reactions: Array<Message.Reaction>
 ) : Message<String>("message", owner, message, ts, starred, reactions) {
     companion object {
         fun from(json: JsonObject): SimpleMessage {
@@ -21,7 +22,18 @@ final class SimpleMessage private constructor(owner: User,
                 throw IllegalArgumentException("JsonElement 'type' is not a string!");
             }
             if (json["type"].asString == "message") {
-                return TODO("Not implemented yet.");
+                val starred = json["is_starred"]?.asBoolean ?: false;
+                val reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
+                        ?.map {
+                            Reaction(it["name"].asString,
+                                    it["users"].asJsonArray.map { User[it.asString]!! }.toTypedArray()
+                            )
+                        }
+                        ?.toTypedArray()
+                        ?: emptyArray();
+
+                return SimpleMessage(User[json["user"].asString]!!, json["text"].asString, json["ts"].getAsTimestamp(),
+                        starred, reactions);
             } else {
                 throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
                         "instead it is ${json["type"].asString}");
