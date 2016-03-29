@@ -9,25 +9,23 @@ import java.time.LocalDateTime
  *
  * @author Dean Bassett
  */
-final data class SimpleMessage private constructor(override val owner: User,
-                                                   override val message: String,
-                                                   override val ts: LocalDateTime,
-                                                   override val starred: Boolean = false,
-                                                   override val reactions: Array<Message.Reaction> = emptyArray()
-) : Message<String> {
+final class SimpleMessage private constructor(owner: User,
+                                              message: String,
+                                              ts: LocalDateTime,
+                                              starred: Boolean = false,
+                                              reactions: Array<Message.Reaction> = emptyArray()
+) : Message<String>("message", owner, message, ts, starred, reactions) {
     companion object {
-        fun from(json: JsonObject) {
+        fun from(json: JsonObject): SimpleMessage {
             if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
                 throw IllegalArgumentException("JsonElement 'type' is not a string!");
             }
             if (json["type"].asString == "message") {
-
+                return TODO("Not implemented yet.");
             } else {
                 throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
                         "instead it is ${json["type"].asString}");
             }
         }
     }
-
-    override val type = "message";
 }

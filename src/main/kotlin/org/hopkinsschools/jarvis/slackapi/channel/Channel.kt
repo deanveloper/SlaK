@@ -3,9 +3,11 @@ package org.hopkinsschools.jarvis.slackapi.channel
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.hopkinsschools.jarvis.slackapi.SlackAPI
+import org.hopkinsschools.jarvis.slackapi.SlackAPI.getAsTimestamp
 import org.hopkinsschools.jarvis.slackapi.User
 import org.hopkinsschools.jarvis.slackapi.message.Message
-import java.time.Instant
+import org.hopkinsschools.jarvis.slackapi.message.SimpleMessage
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -13,8 +15,14 @@ import java.util.*
  *
  * @author Dean Bassett
  */
-class Channel(val id: String, var name: String, val created: Instant, var archived: Boolean, val general: Boolean,
-              val members: List<User>?, val topic: OwnedString.Topic, val purpose: OwnedString.Purpose) {
+class Channel private constructor(val id: String,
+                                  var name: String,
+                                  val created: LocalDateTime,
+                                  var archived: Boolean,
+                                  val general: Boolean,
+                                  val members: List<User>?,
+                                  val topic: OwnedString.Topic,
+                                  val purpose: OwnedString.Purpose) {
 
     init {
         channels[if (name.startsWith('@')) name else "#$name"] = this;
@@ -22,7 +30,7 @@ class Channel(val id: String, var name: String, val created: Instant, var archiv
     }
 
     constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString,
-            Instant.ofEpochSecond(json["created"].asLong), json["is_archived"].asBoolean,
+            json["created"].getAsTimestamp(), json["is_archived"].asBoolean,
             json["is_general"].asBoolean, toUserList(json["members"]?.asJsonArray),
             OwnedString.Topic(json["topic"].asJsonObject), OwnedString.Purpose(json["purpose"].asJsonObject));
 
@@ -64,7 +72,7 @@ class Channel(val id: String, var name: String, val created: Instant, var archiv
         if (unreads) params.add(Pair("unreads", unreads.toString()));
 
         SlackAPI.runMethod("channels.history", *params.toTypedArray()) {
-            cb.invoke(it["messages"].asJsonArray.map { Message.of(it.asJsonObject) });
+            cb.invoke(it["messages"].asJsonArray.map { SimpleMessage.from(it.asJsonObject) });
         }
     }
 

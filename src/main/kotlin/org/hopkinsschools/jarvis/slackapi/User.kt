@@ -15,19 +15,19 @@ import kotlin.concurrent.write
  *
  * @author Dean Bassett
  */
-data class User(val id: String,
-                var name: String,
-                var deleted: Boolean,
-                val color: Color,
-                val profile: Profile,
-                var timezone: TimeZone,
-                var isAdmin: Boolean,
-                var isOwner: Boolean,
-                var has2FA: Boolean,
-                var hasFiles: Boolean) {
+data class User private constructor(val id: String,
+                                    var name: String,
+                                    var deleted: Boolean,
+                                    val color: Color,
+                                    val profile: Profile,
+                                    var timezone: TimeZone,
+                                    var isAdmin: Boolean,
+                                    var isOwner: Boolean,
+                                    var has2FA: Boolean,
+                                    var hasFiles: Boolean) {
 
     init {
-        if(lock.isWriteLockedByCurrentThread) {
+        if (lock.isWriteLockedByCurrentThread) {
             users[if (name.startsWith('@')) name else "@$name"] = this;
             users[id] = this;
         } else {
@@ -66,7 +66,7 @@ data class User(val id: String,
     }
 
     data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
-                  val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
+                       val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
         lateinit var imageSmall: Image
             private set;
         lateinit var imageLarge: Image
