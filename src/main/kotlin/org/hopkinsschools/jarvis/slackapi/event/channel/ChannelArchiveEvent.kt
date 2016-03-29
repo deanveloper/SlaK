@@ -1,6 +1,6 @@
 package org.hopkinsschools.jarvis.slackapi.event.channel
 
-import org.hopkinsschools.jarvis.slackapi.Channel
+import org.hopkinsschools.jarvis.slackapi.channel.Channel
 import java.time.Instant
 
 class ChannelArchiveEvent(channel: Channel, ts: Instant) : ChannelEvent {

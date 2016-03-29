@@ -1,4 +1,4 @@
-package org.hopkinsschools.jarvis.slackapi
+package org.hopkinsschools.jarvis.slackapi.channel
 
 class ImChat {
     init {

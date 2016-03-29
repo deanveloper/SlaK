@@ -17,7 +17,7 @@ object SlackScheduler {
     }
 
     fun submitLater(delay: Duration, task: () -> Unit) {
-        submitTimer(delay, Duration.ofSeconds(-1), task)
+        submitTimer(delay, Duration.ofSeconds(-1), task);
     }
 
     fun submitTimer(delay: Duration, repeat: Duration, task: () -> Unit) {
@@ -30,7 +30,6 @@ object SlackScheduler {
                 if(repeat < Duration.ZERO) break;
                 execute += repeat;
             }
-
         }
     }
 }

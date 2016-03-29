@@ -1,9 +1,10 @@
-package org.hopkinsschools.jarvis.slackapi
+package org.hopkinsschools.jarvis.slackapi.channel
 
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import org.hopkinsschools.jarvis.slackapi.message.OwnedString
+import org.hopkinsschools.jarvis.slackapi.SlackAPI
+import org.hopkinsschools.jarvis.slackapi.User
+import org.hopkinsschools.jarvis.slackapi.message.Message
 import java.time.Instant
 import java.util.*
 
@@ -12,22 +13,8 @@ import java.util.*
  *
  * @author Dean Bassett
  */
-class Channel(id: String, name: String, created: Instant, archived: Boolean, general: Boolean, members: List<User>?,
-              topic: OwnedString, purpose: OwnedString) {
-    val id = id;
-    val name = name;
-
-    val created = created;
-    val general = general;
-    var archived = archived
-        private set;
-
-    val members = members;
-
-    var topic: OwnedString = topic
-        private set;
-    var purpose: OwnedString = purpose
-        private set;
+class Channel(val id: String, var name: String, val created: Instant, var archived: Boolean, val general: Boolean,
+              val members: List<User>?, val topic: OwnedString.Topic, val purpose: OwnedString.Purpose) {
 
     init {
         channels[if (name.startsWith('@')) name else "#$name"] = this;
@@ -37,7 +24,7 @@ class Channel(id: String, name: String, created: Instant, archived: Boolean, gen
     constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString,
             Instant.ofEpochSecond(json["created"].asLong), json["is_archived"].asBoolean,
             json["is_general"].asBoolean, toUserList(json["members"]?.asJsonArray),
-            OwnedString(json["topic"].asJsonObject), OwnedString(json["purpose"].asJsonObject));
+            OwnedString.Topic(json["topic"].asJsonObject), OwnedString.Purpose(json["purpose"].asJsonObject));
 
     companion object {
         //stores the id (ie B5LD982) and the name (ie #random)
@@ -77,19 +64,19 @@ class Channel(id: String, name: String, created: Instant, archived: Boolean, gen
         if (unreads) params.add(Pair("unreads", unreads.toString()));
 
         SlackAPI.runMethod("channels.history", *params.toTypedArray()) {
-            cb.invoke(it["messages"].asJsonArray.map { OwnedString(it.asJsonObject) });
+            cb.invoke(it["messages"].asJsonArray.map { Message.of(it.asJsonObject) });
         }
     }
 
     fun invite(user: User, cb: ((Channel) -> Unit)? = null) {
         SlackAPI.runMethod("channels.invite", "token" to SlackAPI.TOKEN, "channel" to id, "user" to user.id) { json ->
-            cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
+            cb?.invoke(Companion[json.getAsJsonObject("channel")["id"].asString]!!);
         }
     }
 
     fun join(cb: ((Channel) -> Unit)? = null) {
         SlackAPI.runMethod("channels.join", "token" to SlackAPI.TOKEN, "name" to name) { json ->
-            cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
+            cb?.invoke(Companion[json.getAsJsonObject("channel")["id"].asString]!!);
         }
     }
 

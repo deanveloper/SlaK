@@ -15,8 +15,16 @@ import kotlin.concurrent.write
  *
  * @author Dean Bassett
  */
-class User(val id: String, val name: String, val deleted: Boolean, val color: Color, val profile: Profile,
-           val isAdmin: Boolean, val isOwner: Boolean, val has2FA: Boolean, val hasFiles: Boolean) {
+data class User(val id: String,
+                var name: String,
+                var deleted: Boolean,
+                val color: Color,
+                val profile: Profile,
+                var timezone: TimeZone,
+                var isAdmin: Boolean,
+                var isOwner: Boolean,
+                var has2FA: Boolean,
+                var hasFiles: Boolean) {
 
     init {
         if(lock.isWriteLockedByCurrentThread) {
@@ -31,7 +39,8 @@ class User(val id: String, val name: String, val deleted: Boolean, val color: Co
     }
 
     constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString, json["deleted"].asBoolean,
-            Color.getColor(json["color"].asString), Profile(json["profile"].asJsonObject), json["is_admin"].asBoolean,
+            Color.getColor(json["color"].asString), Profile(json["profile"].asJsonObject),
+            SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString), json["is_admin"].asBoolean,
             json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
 
 

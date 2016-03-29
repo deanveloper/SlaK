@@ -1,6 +1,6 @@
 package org.hopkinsschools.jarvis.slackapi.event.im
 
-import org.hopkinsschools.jarvis.slackapi.ImChat
+import org.hopkinsschools.jarvis.slackapi.channel.ImChat
 import java.time.Instant
 
 class ImCloseEvent(im: ImChat, ts: Instant) : ImEvent {

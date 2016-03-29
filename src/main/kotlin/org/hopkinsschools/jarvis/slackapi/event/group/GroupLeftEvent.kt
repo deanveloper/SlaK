@@ -1,6 +1,6 @@
 package org.hopkinsschools.jarvis.slackapi.event.group
 
-import org.hopkinsschools.jarvis.slackapi.Group
+import org.hopkinsschools.jarvis.slackapi.channel.Group
 import java.time.Instant
 
 class GroupLeftEvent(group: Group, ts: Instant) : GroupEvent {
