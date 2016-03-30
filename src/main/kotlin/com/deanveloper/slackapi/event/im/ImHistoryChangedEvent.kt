@@ -1,6 +1,6 @@
 package com.deanveloper.slackapi.event.im
 
-import com.deanveloper.slackapi.slackapi.channel.ImChat
+import com.deanveloper.slackapi.channel.ImChat
 import java.time.Instant
 
 class ImHistoryChangedEvent(im: ImChat, ts: Instant) : ImEvent {

@@ -1,6 +1,6 @@
 package com.deanveloper.slackapi.event.group
 
-import com.deanveloper.slackapi.slackapi.channel.Group
+import com.deanveloper.slackapi.channel.Group
 import java.time.Instant
 
 class GroupClosedEvent(group: Group, ts: Instant) : GroupEvent {

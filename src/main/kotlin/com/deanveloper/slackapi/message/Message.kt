@@ -1,7 +1,6 @@
 package com.deanveloper.slackapi.message
 
-import com.deanveloper.slackapi.slackapi.User
-import java.time.Instant
+import com.deanveloper.slackapi.User
 import java.time.LocalDateTime
 
 abstract class Message<T>(val type: String,

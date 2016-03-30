@@ -1,8 +1,8 @@
 package com.deanveloper.slackapi.message
 
 import com.google.gson.JsonObject
-import com.deanveloper.slackapi.slackapi.SlackAPI.getAsTimestamp
 import com.deanveloper.slackapi.User
+import com.deanveloper.slackapi.getAsTimestamp
 import java.time.LocalDateTime
 
 /**
@@ -17,7 +17,7 @@ final class SimpleMessage private constructor(owner: User,
                                               reactions: Array<Reaction>
 ) : Message<String>("message", owner, message, ts, starred, reactions) {
     companion object {
-        fun from(json: JsonObject): com.deanveloper.slackapi.SimpleMessage {
+        fun from(json: JsonObject): SimpleMessage {
             if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
                 throw IllegalArgumentException("JsonElement 'type' is not a string!");
             }

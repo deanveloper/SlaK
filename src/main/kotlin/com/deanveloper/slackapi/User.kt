@@ -44,7 +44,7 @@ data class User private constructor(val id: String,
             json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
 
 
-    companion object {
+    companion object UserManager {
         private val users = HashMap<String, User>();
         private val lock = ReentrantReadWriteLock();
 
@@ -55,7 +55,7 @@ data class User private constructor(val id: String,
         }
 
         fun register() {
-            SlackAPI.runMethod("users.list", "token" to SlackAPI.TOKEN) {
+            runMethod("users.list", "token" to TOKEN) {
                 lock.write {
                     for (json in it["members"].asJsonArray) {
                         User(json.asJsonObject);

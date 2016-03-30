@@ -1,7 +1,7 @@
 package com.deanveloper.slackapi.event.file
 
-import com.deanveloper.slackapi.slackapi.Comment
-import com.deanveloper.slackapi.slackapi.message.SlackFile
+import com.deanveloper.slackapi.Comment
+import com.deanveloper.slackapi.message.SlackFile
 import java.time.Instant
 
 class FileCommentDeletedEvent(comment: Comment, file: SlackFile, ts: Instant) : FileEvent.FileCommentEvent {

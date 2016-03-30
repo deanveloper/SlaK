@@ -1,8 +1,8 @@
 package com.deanveloper.slackapi.channel
 
 import com.google.gson.JsonObject
-import com.deanveloper.slackapi.slackapi.SlackAPI.getAsTimestamp
-import com.deanveloper.slackapi.slackapi.User
+import com.deanveloper.slackapi.getAsTimestamp
+import com.deanveloper.slackapi.User
 import java.time.LocalDateTime
 
 /**
