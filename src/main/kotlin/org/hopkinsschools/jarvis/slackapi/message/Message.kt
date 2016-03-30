@@ -4,7 +4,7 @@ import org.hopkinsschools.jarvis.slackapi.User
 import java.time.Instant
 import java.time.LocalDateTime
 
-open class Message<T>(val type: String,
+abstract class Message<T>(val type: String,
                       val owner: User,
                       val message: T,
                       val ts: LocalDateTime,

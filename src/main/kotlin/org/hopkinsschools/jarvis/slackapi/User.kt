@@ -55,7 +55,7 @@ data class User private constructor(val id: String,
         }
 
         fun register() {
-            SlackAPI.runMethod("users.list", Pair("token", SlackAPI.TOKEN)) {
+            SlackAPI.runMethod("users.list", "token" to SlackAPI.TOKEN) {
                 lock.write {
                     for (json in it["members"].asJsonArray) {
                         User(json.asJsonObject);

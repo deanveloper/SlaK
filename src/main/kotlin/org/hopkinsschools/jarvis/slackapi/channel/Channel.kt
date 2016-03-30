@@ -41,7 +41,7 @@ class Channel private constructor(val id: String,
         operator fun get(index: String) = channels[index];
 
         fun register() {
-            SlackAPI.runMethod("channels.list", Pair("token", SlackAPI.TOKEN), Pair("exclude_archived", "0")) {
+            SlackAPI.runMethod("channels.list", "token" to SlackAPI.TOKEN, "exclude_archived" to "0") {
                 for (json in it["channels"].asJsonArray) {
                     Channel(json.asJsonObject);
                 }
@@ -49,7 +49,7 @@ class Channel private constructor(val id: String,
         }
 
         fun create(channel: String, cb: ((Channel) -> Unit)? = null) {
-            SlackAPI.runMethod("channels.create", Pair("name", channel), Pair("token", SlackAPI.TOKEN)) { json ->
+            SlackAPI.runMethod("channels.create", "name" to channel, "token" to SlackAPI.TOKEN) { json ->
                 val created = Channel(json["channel"].asJsonObject);
                 cb?.invoke(created);
             }
@@ -63,13 +63,13 @@ class Channel private constructor(val id: String,
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
                 unreads: Boolean = false, cb: (List<Message<*>>) -> Unit) {
         var params = ArrayList<Pair<String, String>>(5);
-        params.add(Pair("token", SlackAPI.TOKEN));
-        params.add(Pair("channel", id));
-        if (latest > 0) params.add(Pair("latest", latest.toString()));
-        if (oldest > 0) params.add(Pair("oldest", oldest.toString()));
-        if (inclusive) params.add(Pair("inclusive", inclusive.toString()));
-        if (count > 0) params.add(Pair("count", count.toString()));
-        if (unreads) params.add(Pair("unreads", unreads.toString()));
+        params.add("token" to SlackAPI.TOKEN);
+        params.add("channel" to id);
+        if (latest > 0) params.add("latest" to latest.toString());
+        if (oldest > 0) params.add("oldest" to oldest.toString());
+        if (inclusive) params.add("inclusive" to inclusive.toString());
+        if (count > 0) params.add("count" to count.toString());
+        if (unreads) params.add("unreads" to unreads.toString());
 
         SlackAPI.runMethod("channels.history", *params.toTypedArray()) {
             cb.invoke(it["messages"].asJsonArray.map { SimpleMessage.from(it.asJsonObject) });

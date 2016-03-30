@@ -37,8 +37,8 @@ object SlackAPI {
                     cb?.invoke(json)
                 } else {
                     if (onError == null)
-                        runMethod("chat.postMessage", Pair("token", TOKEN), Pair("channel", Channel["#random"]!!.id),
-                                Pair("text", "Server side error!\n>${json["error"].asString}"));
+                        runMethod("chat.postMessage", "token" to TOKEN, "channel" to Channel["#random"]!!.id,
+                                "text" to "Server side error!\n> ${json["error"].asString}");
                     else
                         onError.invoke(json["error"].asString);
                 }
@@ -49,8 +49,8 @@ object SlackAPI {
                 val sw = StringWriter();
                 e.printStackTrace(PrintWriter(sw));
                 val stack = sw.toString();
-                runMethod("chat.postMessage", Pair("token", TOKEN), Pair("channel", Channel["#random"]!!.id),
-                        Pair("text", "Uh oh, the bot encountered an error!\n$stack"));
+                runMethod("chat.postMessage", "token" to TOKEN, "channel" to Channel["#random"]!!.id,
+                        "text" to "Uh oh, the bot encountered an error!\n$stack");
                 e.printStackTrace();
             }
         }
