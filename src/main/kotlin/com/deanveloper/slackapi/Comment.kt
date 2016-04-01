@@ -1,7 +1,12 @@
 package com.deanveloper.slackapi
 
-class Comment (val user: User) {
-    init {
-        TODO("To be implemented")
-    }
+/**
+ * Represents a file comment
+ *
+ * @author Dean B
+ */
+class Comment(val user: User) {
+	init {
+		TODO("To be implemented")
+	}
 }

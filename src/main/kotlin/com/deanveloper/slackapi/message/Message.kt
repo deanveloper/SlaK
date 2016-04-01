@@ -10,6 +10,6 @@ abstract class Message<T>(val type: String,
                           val starred: Boolean = false,
                           var reactions: Array<Reaction> = emptyArray()) {
 
-    data class Reaction (val name: String, var users: Array<User>);
+	data class Reaction(val name: String, var users: Array<User>);
 }
 

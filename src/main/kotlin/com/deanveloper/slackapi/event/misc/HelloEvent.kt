@@ -4,6 +4,6 @@ import com.deanveloper.slackapi.event.Event
 import java.time.Instant
 
 class HelloEvent(ts: Instant) : Event {
-    override val name = "hello";
-    override val ts = ts;
+	override val name = "hello";
+	override val ts = ts;
 }

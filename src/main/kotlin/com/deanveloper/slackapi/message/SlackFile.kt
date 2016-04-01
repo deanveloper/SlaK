@@ -1,7 +1,7 @@
 package com.deanveloper.slackapi.message
 
 class SlackFile {
-    init {
-        TODO("Not yet implemented")
-    }
+	init {
+		TODO("Not yet implemented")
+	}
 }
