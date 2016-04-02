@@ -1,9 +1,9 @@
 package com.deanveloper.slackapi.event.misc
 
 import com.deanveloper.slackapi.event.Event
-import java.time.Instant
+import java.time.LocalDateTime
 
-class EmojiChangeEvent(ts: Instant) : Event {
+class EmojiChangeEvent(ts: LocalDateTime) : Event {
 	override val name = "emoji_changed";
 	override val ts = ts;
 }

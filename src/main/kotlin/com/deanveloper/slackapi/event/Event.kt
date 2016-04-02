@@ -1,8 +1,8 @@
 package com.deanveloper.slackapi.event
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 interface Event {
 	val name: String;
-	val ts: Instant;
+	val ts: LocalDateTime;
 }
