@@ -7,14 +7,11 @@
  */
 package com.deanveloper.slackapi
 
-import com.deanveloper.slackapi.channel.Channel
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.io.PrintWriter
-import java.io.StringWriter
 import java.net.URL
 import java.time.Instant
 import java.time.LocalDateTime
@@ -41,6 +38,7 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: (Sla
 					error = SlackError.valueOf(json["error"].asString);
 				} catch (e: Exception) {
 					error = SlackError.UNDOCUMENTED_ERROR;
+					println(json["error"].asString);
 				}
 				onError.invoke(error);
 			}
@@ -48,11 +46,6 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: (Sla
 			//if there's a warning, invoke onWarning
 			json["warning"]?.let { onWarning.invoke(it.asString) };
 		} catch (e: Exception) {
-			val sw = StringWriter();
-			e.printStackTrace(PrintWriter(sw));
-			val stack = sw.toString();
-			runMethod("chat.postMessage", "token" to TOKEN, "channel" to Channel["#random"]!!.id,
-					"text" to "Uh oh, the bot encountered an error!\n$stack");
 			e.printStackTrace();
 		}
 	}

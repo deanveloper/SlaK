@@ -18,7 +18,7 @@ import kotlin.concurrent.write
 data class User private constructor(val id: String,
                                     var name: String,
                                     var deleted: Boolean,
-                                    val color: Color,
+                                    var color: Color,
                                     val profile: Profile,
                                     var timezone: TimeZone,
                                     var isAdmin: Boolean,

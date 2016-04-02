@@ -1,8 +1,8 @@
 package com.deanveloper.slackapi.message
 
-import com.google.gson.JsonObject
 import com.deanveloper.slackapi.User
 import com.deanveloper.slackapi.asTimestamp
+import com.google.gson.JsonObject
 import java.time.LocalDateTime
 
 /**
