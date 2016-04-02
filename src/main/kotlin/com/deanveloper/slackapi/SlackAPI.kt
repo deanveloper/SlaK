@@ -25,8 +25,8 @@ const val TOKEN = "";
 const val BASE_URL = "https://2239technocrats.slack.com/api/";
 val parser = JsonParser();
 
-fun runMethod(method: String, vararg params: Pair<String, String>, onError: ((String) -> Unit)? = null,
-              onWarning: ((String) -> Unit)? = null, cb: ((JsonObject) -> Unit)? = null) {
+fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlackError) -> Unit = {},
+              onWarning: (String) -> Unit = {}, cb: (JsonObject) -> Unit = {}) {
 	SlackScheduler.submit {
 		try {
 			val website = URL(BASE_URL + method + params.format()).openConnection();
@@ -34,17 +34,19 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: ((St
 
 			val json = parser.parse(reader).asJsonObject;
 			if (json["ok"].asBoolean) {
-				cb?.invoke(json)
+				cb.invoke(json)
 			} else {
-				if (onError == null)
-					runMethod("chat.postMessage", "token" to TOKEN, "channel" to Channel["#random"]!!.id,
-							"text" to "Server side error!\n> ${json["error"].asString}");
-				else
-					onError.invoke(json["error"].asString);
+				val error: SlackError;
+				try {
+					error = SlackError.valueOf(json["error"].asString);
+				} catch (e: Exception) {
+					error = SlackError.UNDOCUMENTED_ERROR;
+				}
+				onError.invoke(error);
 			}
 
 			//if there's a warning, invoke onWarning
-			json["warning"]?.let { onWarning?.invoke(it.asString) };
+			json["warning"]?.let { onWarning.invoke(it.asString) };
 		} catch (e: Exception) {
 			val sw = StringWriter();
 			e.printStackTrace(PrintWriter(sw));
@@ -56,19 +58,20 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: ((St
 	}
 }
 
+/**
+ * Turns an array of paired strings into a single formatted string.
+ */
 private fun Array<out Pair<String, String>>.format(): String {
-	val sb = StringBuilder("?");
-
-	for ((key, value) in this) {
-		sb.append("$key&${value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}");
-		sb.append('&');
+	return buildString {
+		for ((key, value) in this@format) {
+			append("$key&${value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}");
+			this.append('&');
+		}
+		deleteCharAt(length - 1);
 	}
-	sb.deleteCharAt(sb.length - 1);
-
-	return sb.toString();
 }
 
-fun JsonElement.getAsTimestamp(): LocalDateTime {
+val JsonElement.asTimestamp: LocalDateTime get() {
 	if (this.isJsonPrimitive) {
 		val time: Instant;
 		if (this.asJsonPrimitive.isString) {

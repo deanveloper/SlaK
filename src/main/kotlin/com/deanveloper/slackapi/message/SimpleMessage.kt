@@ -2,42 +2,55 @@ package com.deanveloper.slackapi.message
 
 import com.google.gson.JsonObject
 import com.deanveloper.slackapi.User
-import com.deanveloper.slackapi.getAsTimestamp
+import com.deanveloper.slackapi.asTimestamp
 import java.time.LocalDateTime
 
 /**
- * Represents a simple message
+ * Represents a simple message.
  *
  * @author Dean B
  */
-final class SimpleMessage private constructor(owner: User,
-                                              message: String,
-                                              ts: LocalDateTime,
-                                              starred: Boolean,
-                                              reactions: Array<Reaction>
-) : Message<String>("message", owner, message, ts, starred, reactions) {
-	companion object {
-		fun from(json: JsonObject): SimpleMessage {
-			if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
-				throw IllegalArgumentException("JsonElement 'type' is not a string!");
-			}
-			if (json["type"].asString == "message") {
-				val starred = json["is_starred"]?.asBoolean ?: false;
-				val reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
-						?.map {
-							Reaction(it["name"].asString,
-									it["users"].asJsonArray.map { User[it.asString]!! }.toTypedArray()
-							)
-						}
-						?.toTypedArray()
-						?: emptyArray();
+final class SimpleMessage : Message<String> {
+	override val type = "message";
+	override val owner: User;
+	override var message: String;
+	override val ts: LocalDateTime;
+	override var starred: Boolean;
+	override var reactions: Array<Reaction>;
 
-				return SimpleMessage(User[json["user"].asString]!!, json["text"].asString, json["ts"].getAsTimestamp(),
-						starred, reactions);
-			} else {
-				throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
-						"instead it is ${json["type"].asString}");
-			}
+	constructor(owner: User,
+	            message: String,
+	            ts: LocalDateTime,
+	            starred: Boolean = false,
+	            reactions: Array<Reaction> = emptyArray()) {
+		this.owner = owner;
+		this.message = message;
+		this.ts = ts;
+		this.starred = starred;
+		this.reactions = reactions;
+	}
+
+	constructor(json: JsonObject) {
+		if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
+			throw IllegalArgumentException("JsonElement 'type' is not a string!");
+		}
+		if (json["type"].asString == "message") {
+			this.starred = json["is_starred"]?.asBoolean ?: false;
+			this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
+					?.map {
+						Reaction(it["name"].asString,
+								it["users"].asJsonArray.map { User[it.asString]!! }.toTypedArray()
+						)
+					}
+					?.toTypedArray()
+					?: emptyArray();
+
+			this.owner = User[json["user"].asString]!!;
+			this.message = json["text"].asString;
+			this.ts = json["ts"].asTimestamp;
+		} else {
+			throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
+					"instead it is ${json["type"].asString}");
 		}
 	}
 }

@@ -1,8 +1,8 @@
 package com.deanveloper.slackapi.channel
 
-import com.google.gson.JsonObject
-import com.deanveloper.slackapi.getAsTimestamp
 import com.deanveloper.slackapi.User
+import com.deanveloper.slackapi.asTimestamp
+import com.google.gson.JsonObject
 import java.time.LocalDateTime
 
 /**
@@ -29,7 +29,7 @@ sealed class OwnedString(open val owner: User, protected open val string: String
 		constructor(json: JsonObject) : this(
 				User[json["owner"].asString]!!,
 				json["value"].asString,
-				json["last_set"].getAsTimestamp()
+				json["last_set"].asTimestamp
 		)
 	}
 
@@ -48,7 +48,7 @@ sealed class OwnedString(open val owner: User, protected open val string: String
 		constructor(json: JsonObject) : this(
 				User[json["owner"].asString]!!,
 				json["value"].asString,
-				json["last_set"].getAsTimestamp()
+				json["last_set"].asTimestamp
 		)
 	}
 }

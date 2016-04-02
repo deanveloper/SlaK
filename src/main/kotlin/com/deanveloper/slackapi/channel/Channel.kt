@@ -2,7 +2,7 @@ package com.deanveloper.slackapi.channel
 
 import com.deanveloper.slackapi.TOKEN
 import com.deanveloper.slackapi.User
-import com.deanveloper.slackapi.getAsTimestamp
+import com.deanveloper.slackapi.asTimestamp
 import com.deanveloper.slackapi.message.Message
 import com.deanveloper.slackapi.message.SimpleMessage
 import com.deanveloper.slackapi.runMethod
@@ -31,7 +31,7 @@ class Channel private constructor(val id: String,
 	}
 
 	constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString,
-			json["created"].getAsTimestamp(), json["is_archived"].asBoolean,
+			json["created"].asTimestamp, json["is_archived"].asBoolean,
 			json["is_general"].asBoolean, toUserList(json["members"]?.asJsonArray),
 			OwnedString.Topic(json["topic"].asJsonObject), OwnedString.Purpose(json["purpose"].asJsonObject));
 
@@ -77,7 +77,7 @@ class Channel private constructor(val id: String,
 		if (unreads) params.add("unreads" to unreads.toString());
 
 		runMethod("channels.history", *params.toTypedArray()) {
-			cb.invoke(it["messages"].asJsonArray.map { SimpleMessage.from(it.asJsonObject) });
+			cb.invoke(it["messages"].asJsonArray.map { SimpleMessage(it.asJsonObject) });
 		}
 	}
 
