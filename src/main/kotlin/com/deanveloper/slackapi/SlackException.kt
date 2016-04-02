@@ -4,23 +4,23 @@ package com.deanveloper.slackapi
  * @author Dean B
  */
 sealed class SlackException(val desc: String) {
-	val name: String
-		get() {
-			val name = javaClass.simpleName.toCharArray();
-			var isFirst: Boolean = true;
+	val name: String;
 
-			return buildString {
-				for (c in name) {
-					if (c.isUpperCase()) {
-						if (!isFirst) {
-							this.append('_');
-						} else {
-							isFirst = false;
-						}
+	init {
+		var isFirst: Boolean = true;
 
-						this.append(c.toLowerCase());
+		name = buildString {
+			for (c in javaClass.simpleName) {
+				if (c.isUpperCase()) {
+					if (!isFirst) {
+						this.append('_');
+					} else {
+						isFirst = false;
 					}
+
+					this.append(c.toLowerCase());
 				}
 			}
 		}
+	}
 }
