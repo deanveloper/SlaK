@@ -3,7 +3,7 @@ package com.deanveloper.slackapi
 /**
  * @author Dean B
  */
-enum class SlackException(val desc: String) {
+enum class SlackError(val desc: String) {
 	INVALID_ARRAY_ARGS("The method was passed a PHP-style array argument " +
 			"(e.g. with a name like foo[7]). These are never valid with the Slack API."),
 	INVALID_CHARSET("The method was called via a POST request, but the charset " +
