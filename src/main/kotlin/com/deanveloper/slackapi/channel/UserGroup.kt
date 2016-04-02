@@ -1,6 +1,9 @@
 package com.deanveloper.slackapi.channel
 
-class Group {
+/**
+ * @author Dean B
+ */
+class UserGroup {
 	init {
 		TODO()
 	}

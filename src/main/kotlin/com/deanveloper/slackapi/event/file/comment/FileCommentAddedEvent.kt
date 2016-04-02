@@ -1,6 +1,6 @@
 package com.deanveloper.slackapi.event.file.comment
 
-import com.deanveloper.slackapi.Comment
+import com.deanveloper.slackapi.message.Comment
 import com.deanveloper.slackapi.event.file.FileEvent
 import com.deanveloper.slackapi.message.SlackFile
 import java.time.Instant

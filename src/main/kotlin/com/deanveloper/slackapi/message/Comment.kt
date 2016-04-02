@@ -1,4 +1,6 @@
-package com.deanveloper.slackapi
+package com.deanveloper.slackapi.message
+
+import com.deanveloper.slackapi.User
 
 /**
  * Represents a file comment
@@ -7,6 +9,6 @@ package com.deanveloper.slackapi
  */
 class Comment(val user: User) {
 	init {
-		TODO("To be implemented")
+		TODO()
 	}
 }
