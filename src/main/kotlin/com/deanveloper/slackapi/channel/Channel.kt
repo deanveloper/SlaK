@@ -52,7 +52,7 @@ class Channel private constructor(val id: String,
 			}
 		}
 
-		private fun toUserList(array: JsonArray?) = array?.map { User[it.asString]!! };
+		private fun toUserList(array: JsonArray?) = array?.map { User[it.asString] };
 	}
 
 	fun archive(cb: () -> Unit) {
@@ -79,13 +79,13 @@ class Channel private constructor(val id: String,
 
 	fun invite(user: User, cb: ((Channel) -> Unit)? = null) {
 		runMethod("channels.invite", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
-			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
+			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]);
 		}
 	}
 
 	fun join(cb: ((Channel) -> Unit)? = null) {
 		runMethod("channels.join", "token" to TOKEN, "name" to name) { json ->
-			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]!!);
+			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString]);
 		}
 	}
 

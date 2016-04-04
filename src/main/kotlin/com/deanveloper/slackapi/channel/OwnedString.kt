@@ -27,7 +27,7 @@ sealed class OwnedString(open val owner: User, protected open val string: String
 			override val ts: LocalDateTime
 	) : OwnedString(owner, purpose, ts) {
 		constructor(json: JsonObject) : this(
-				User[json["owner"].asString]!!,
+				User[json["owner"].asString],
 				json["value"].asString,
 				json["last_set"].asTimestamp
 		)
@@ -46,7 +46,7 @@ sealed class OwnedString(open val owner: User, protected open val string: String
 			override val ts: LocalDateTime
 	) : OwnedString(owner, topic, ts) {
 		constructor(json: JsonObject) : this(
-				User[json["owner"].asString]!!,
+				User[json["owner"].asString],
 				json["value"].asString,
 				json["last_set"].asTimestamp
 		)

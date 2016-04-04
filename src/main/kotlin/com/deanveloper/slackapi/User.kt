@@ -7,10 +7,7 @@ import java.awt.Color
 import java.awt.Image
 import java.net.URL
 import java.util.*
-import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.imageio.ImageIO
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 /**
  * Represents a slack user
@@ -28,58 +25,41 @@ data class User private constructor(val id: String,
                                     var has2FA: Boolean,
                                     var hasFiles: Boolean) {
 
-	init {
-		if (lock.isWriteLockedByCurrentThread) {
-			cached[if (name.startsWith('@')) name else "@$name"] = this;
-			cached[id] = this;
-		} else {
-			lock.write {
-				cached[if (name.startsWith('@')) name else "@$name"] = this;
-				cached[id] = this;
-			}
-		}
-	}
+    init {
+        UserManager.put(if (name.startsWith('@')) name else "@$name", this);
+        UserManager.put(id, this);
+    }
 
-	constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString, json["deleted"].asBoolean,
-			Color.getColor(json["color"].asString), Profile(json["profile"].asJsonObject),
-			SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString), json["is_admin"].asBoolean,
-			json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
+    constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString, json["deleted"].asBoolean,
+            Color.getColor(json["color"].asString), Profile(json["profile"].asJsonObject),
+            SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString), json["is_admin"].asBoolean,
+            json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
 
 
-	companion object UserManager : Cacher<String, User>() {
-		private val lock = ReentrantReadWriteLock();
+    companion object UserManager : Cacher<String, User>() {
+        fun start() {
+            runMethod("users.list", "token" to TOKEN) {
+                for (json in it["members"].asJsonArray) {
+                    User(json.asJsonObject);
+                }
+            }
+        }
+    }
 
-		override operator fun get(index: String): User {
-			lock.read {
-				return super.get(index);
-			}
-		}
+    data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
+                       val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
+        lateinit var imageSmall: Image
+            private set;
+        lateinit var imageLarge: Image
+            private set;
 
-		fun start() {
-			runMethod("users.list", "token" to TOKEN) {
-				lock.write {
-					for (json in it["members"].asJsonArray) {
-						User(json.asJsonObject);
-					}
-				}
-			}
-		}
-	}
+        init {
+            SlackScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
+            SlackScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
+        }
 
-	data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
-	                   val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
-		lateinit var imageSmall: Image
-			private set;
-		lateinit var imageLarge: Image
-			private set;
-
-		init {
-			SlackScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
-			SlackScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
-		}
-
-		constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,
-				json["real_name"].asString, json["email"].asString, json["skype"].asString, json["phone"].asString,
-				json["image_32"].asString, json["image_192"].asString);
-	}
+        constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,
+                json["real_name"].asString, json["email"].asString, json["skype"].asString, json["phone"].asString,
+                json["image_32"].asString, json["image_192"].asString);
+    }
 }
