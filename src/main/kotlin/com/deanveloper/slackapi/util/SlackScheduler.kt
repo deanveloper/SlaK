@@ -1,4 +1,4 @@
-package com.deanveloper.slackapi
+package com.deanveloper.slackapi.util
 
 import java.time.Duration
 import java.time.LocalDateTime

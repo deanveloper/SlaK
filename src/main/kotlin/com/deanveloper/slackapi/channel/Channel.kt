@@ -6,6 +6,7 @@ import com.deanveloper.slackapi.asTimestamp
 import com.deanveloper.slackapi.message.Message
 import com.deanveloper.slackapi.message.SimpleMessage
 import com.deanveloper.slackapi.runMethod
+import com.deanveloper.slackapi.util.Cacher
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import java.time.LocalDateTime
@@ -26,8 +27,8 @@ class Channel private constructor(val id: String,
                                   val purpose: OwnedString.Purpose) {
 
 	init {
-		channels[if (name.startsWith('@')) name else "#$name"] = this;
-		channels[id] = this;
+		ChannelManager.put(if (name.startsWith('@')) name else "#$name", this);
+		ChannelManager.put(id, this);
 	}
 
 	constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString,
@@ -35,12 +36,7 @@ class Channel private constructor(val id: String,
 			json["is_general"].asBoolean, toUserList(json["members"]?.asJsonArray),
 			OwnedString.Topic(json["topic"].asJsonObject), OwnedString.Purpose(json["purpose"].asJsonObject));
 
-	companion object ChannelManager {
-		//stores the id (ie B5LD982) and the name (ie #random)
-		private val channels = HashMap<String, Channel>();
-
-		operator fun get(index: String) = channels[index];
-
+	companion object ChannelManager : Cacher<String, Channel>() {
 		fun register() {
 			runMethod("channels.list", "token" to TOKEN, "exclude_archived" to "0") {
 				for (json in it["channels"].asJsonArray) {
@@ -105,7 +101,7 @@ class Channel private constructor(val id: String,
 		}
 	}
 
-	fun list() = setOf(*channels.values.toTypedArray());
+	fun list() = setOf(*ChannelManager.values.toTypedArray());
 
 	fun setPurpose(purpose: String, cb: ((String) -> Unit)?) {
 		runMethod("channels.setPurpose", "token" to TOKEN, "channel" to id, "purpose" to purpose) {

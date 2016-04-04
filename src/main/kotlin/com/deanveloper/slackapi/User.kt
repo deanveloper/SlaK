@@ -1,5 +1,7 @@
 package com.deanveloper.slackapi
 
+import com.deanveloper.slackapi.util.Cacher
+import com.deanveloper.slackapi.util.SlackScheduler
 import com.google.gson.JsonObject
 import java.awt.Color
 import java.awt.Image
@@ -28,12 +30,12 @@ data class User private constructor(val id: String,
 
 	init {
 		if (lock.isWriteLockedByCurrentThread) {
-			users[if (name.startsWith('@')) name else "@$name"] = this;
-			users[id] = this;
+			cached[if (name.startsWith('@')) name else "@$name"] = this;
+			cached[id] = this;
 		} else {
 			lock.write {
-				users[if (name.startsWith('@')) name else "@$name"] = this;
-				users[id] = this;
+				cached[if (name.startsWith('@')) name else "@$name"] = this;
+				cached[id] = this;
 			}
 		}
 	}
@@ -44,17 +46,16 @@ data class User private constructor(val id: String,
 			json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
 
 
-	companion object UserManager {
-		private val users = HashMap<String, User>();
+	companion object UserManager : Cacher<String, User>() {
 		private val lock = ReentrantReadWriteLock();
 
-		operator fun get(index: String): User? {
+		override operator fun get(index: String): User {
 			lock.read {
-				return users[index]; //inline lambda, `return` returns to `get` method
+				return super.get(index);
 			}
 		}
 
-		fun register() {
+		fun start() {
 			runMethod("users.list", "token" to TOKEN) {
 				lock.write {
 					for (json in it["members"].asJsonArray) {
