@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 /**
  * @author Dean B
  */
-class EmailDomainChangedEvent(ts: LocalDateTime) : Event {
-	override val name = "email_domain_changed";
+class TeamProfileReorderEvent(ts: LocalDateTime) : Event {
+	override val name = "team_profile_reorder";
 	override val ts = ts;
 }
