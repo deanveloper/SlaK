@@ -20,9 +20,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 
-val TOKEN: String by LateInitVal();
-val BASE_URL: String by LateInitVal();
-val parser = JsonParser();
+var TOKEN: String by LateInitVal();
+var BASE_URL: String by LateInitVal();
+val PARSER = JsonParser();
 
 fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlaKError) -> Unit = {},
               onWarning: (String) -> Unit = {}, cb: (JsonObject) -> Unit = {}) {
@@ -31,7 +31,7 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: (Sla
 			val website = URL(BASE_URL + method + params.format()).openConnection();
 			val reader = BufferedReader(InputStreamReader(website.inputStream));
 
-			val json = parser.parse(reader).asJsonObject;
+			val json = PARSER.parse(reader).asJsonObject;
 			if (json["ok"].asBoolean) {
 				cb.invoke(json)
 			} else {
