@@ -1,6 +1,6 @@
 package com.deanveloper.slak.message
 
-class SlackFile {
+class SlaKFile {
 	init {
 		TODO()
 	}

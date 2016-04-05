@@ -8,7 +8,7 @@
 package com.deanveloper.slak
 
 import com.deanveloper.slak.util.LateInitVal
-import com.deanveloper.slak.util.SlackScheduler
+import com.deanveloper.slak.util.SlaKScheduler
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -24,9 +24,9 @@ val TOKEN: String by LateInitVal();
 val BASE_URL: String by LateInitVal();
 val parser = JsonParser();
 
-fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlackError) -> Unit = {},
+fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlaKError) -> Unit = {},
               onWarning: (String) -> Unit = {}, cb: (JsonObject) -> Unit = {}) {
-	SlackScheduler.submit {
+	SlaKScheduler.submit {
 		try {
 			val website = URL(BASE_URL + method + params.format()).openConnection();
 			val reader = BufferedReader(InputStreamReader(website.inputStream));
@@ -35,11 +35,11 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: (Sla
 			if (json["ok"].asBoolean) {
 				cb.invoke(json)
 			} else {
-				val error: SlackError;
+				val error: SlaKError;
 				try {
-					error = SlackError.valueOf(json["error"].asString);
+					error = SlaKError.valueOf(json["error"].asString);
 				} catch (e: Exception) {
-					error = SlackError.UNDOCUMENTED_ERROR;
+					error = SlaKError.UNDOCUMENTED_ERROR;
 					println(json["error"].asString);
 				}
 				onError.invoke(error);

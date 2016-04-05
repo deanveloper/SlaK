@@ -1,7 +1,7 @@
 package com.deanveloper.slak
 
 import com.deanveloper.slak.util.Cacher
-import com.deanveloper.slak.util.SlackScheduler
+import com.deanveloper.slak.util.SlaKScheduler
 import com.google.gson.JsonObject
 import java.awt.Color
 import java.awt.Image
@@ -54,8 +54,8 @@ data class User private constructor(val id: String,
 			private set;
 
 		init {
-			SlackScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
-			SlackScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
+			SlaKScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
+			SlaKScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
 		}
 
 		constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,

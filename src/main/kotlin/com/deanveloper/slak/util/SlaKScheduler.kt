@@ -9,7 +9,7 @@ import java.util.concurrent.Executors
  *
  * @author Dean B
  */
-object SlackScheduler {
+object SlaKScheduler {
 	private val executor = Executors.newCachedThreadPool();
 
 	fun submit(task: () -> Unit) {
