@@ -5,7 +5,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 /**
- * Represents the Companion Object for a cachable class
+ * Represents the Companion Object for a cachable class.
  *
  * @author Dean B
  */
@@ -17,9 +17,9 @@ open class Cacher<K, V> {
 
     protected fun put(index: K, value: V) = lock.write { cached.put(index, value) };
 
-    val values: Collection<V>
-        get() = cached.values;
-
     val keys: Set<K>
-        get() = cached.keys
+        get() = lock.read { cached.keys };
+
+    val values: Collection<V>
+        get() = lock.read { cached.values };
 }

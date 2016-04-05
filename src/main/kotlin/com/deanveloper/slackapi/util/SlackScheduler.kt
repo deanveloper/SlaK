@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
 /**
- * Utility to run tasks asynchronously
+ * Utility to run tasks asynchronously.
  *
  * @author Dean B
  */
