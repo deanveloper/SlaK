@@ -8,7 +8,7 @@
 package com.deanveloper.slak
 
 import com.deanveloper.slak.util.LateInitVal
-import com.deanveloper.slak.util.SlaKScheduler
+import com.deanveloper.slak.util.runAsync
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -26,7 +26,7 @@ val PARSER = JsonParser()
 
 fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlaKError) -> Unit = {},
               onWarning: (String) -> Unit = {}, cb: (JsonObject) -> Unit = {}) {
-	SlaKScheduler.submit {
+	runAsync {
 		try {
 			val website = URL(BASE_URL + method + params.format()).openConnection()
 			val reader = BufferedReader(InputStreamReader(website.inputStream))

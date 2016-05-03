@@ -39,13 +39,13 @@ final class SimpleMessage : Message<String> {
 			this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
 					?.map {
 						Reaction(it["name"].asString,
-								it["users"].asJsonArray.map { User[it.asString]!! }.toTypedArray()
+								it["users"].asJsonArray.map { User[it.asString] }.toTypedArray()
 						)
 					}
 					?.toTypedArray()
 					?: emptyArray()
 
-			this.owner = User[json["user"].asString]!!
+			this.owner = User[json["user"].asString]
 			this.message = json["text"].asString
 			this.ts = json["ts"].asTimestamp
 		} else {
