@@ -9,7 +9,7 @@ abstract class Message<T>() {
 	abstract val message: T
 	abstract val ts: LocalDateTime
 	open val starred: Boolean = false
-	open var reactions: Array<Reaction> = emptyArray()
+	open var reactions: List<Reaction> = emptyList()
 
 	data class Reaction(val name: String, var users: Array<User>)
 }

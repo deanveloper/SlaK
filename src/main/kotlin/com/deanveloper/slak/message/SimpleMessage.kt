@@ -16,13 +16,13 @@ final class SimpleMessage : Message<String> {
 	override var message: String
 	override val ts: LocalDateTime
 	override var starred: Boolean
-	override var reactions: Array<Reaction>
+	override var reactions: List<Reaction>
 
 	constructor(owner: User,
 	            message: String,
 	            ts: LocalDateTime,
 	            starred: Boolean = false,
-	            reactions: Array<Reaction> = emptyArray()) {
+	            reactions: List<Reaction> = emptyList()) {
 		this.owner = owner
 		this.message = message
 		this.ts = ts
@@ -41,9 +41,7 @@ final class SimpleMessage : Message<String> {
 						Reaction(it["name"].asString,
 								it["users"].asJsonArray.map { User[it.asString] }.toTypedArray()
 						)
-					}
-					?.toTypedArray()
-					?: emptyArray()
+					} ?: emptyList()
 
 			this.owner = User[json["user"].asString]
 			this.message = json["text"].asString
