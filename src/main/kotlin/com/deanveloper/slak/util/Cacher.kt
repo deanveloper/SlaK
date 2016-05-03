@@ -13,9 +13,11 @@ open class Cacher<K, V> {
 	private val lock = ReentrantReadWriteLock()
 	private val cached: MutableMap<K, V> = mutableMapOf()
 
-	open operator fun get(index: K) = lock.read { cached[index] ?: throw RuntimeException("Index not found!") }
+	operator fun get(index: K) = lock.read { cached[index] ?: throw RuntimeException("Index not found!") }
 
-	protected fun put(index: K, value: V) = lock.write { cached.put(index, value) }
+	internal fun put(index: K, value: V) = lock.write { cached.put(index, value) }
+
+	internal fun remove(index: K) = lock.write { cached.remove(index) }
 
 	val keys: Set<K>
 		get() = lock.read { cached.keys }
