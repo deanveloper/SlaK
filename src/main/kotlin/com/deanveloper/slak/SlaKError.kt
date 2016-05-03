@@ -108,5 +108,5 @@ enum class SlaKError(val desc: String) {
 	PAID_ONLY("This is only available to paid teams."),
 	OVER_PAGINATION_LIMIT("It is not possible to request more than 1000 items per page or more than 100 pages."),
 	INVALID_PRESENCE("Value passed for presence was invalid."),
-	UNDOCUMENTED_ERROR("This error is not documented. Check console for more information.");
+	UNDOCUMENTED_ERROR("This error is not documented. Check console for more information.")
 }

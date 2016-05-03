@@ -4,7 +4,7 @@ import com.deanveloper.slak.channel.Group
 import java.time.LocalDateTime
 
 class GroupLeftEvent(group: Group, ts: LocalDateTime) : GroupEvent {
-	override val name = "group_left";
-	override val group = group;
-	override val ts = ts;
+	override val name = "group_left"
+	override val group = group
+	override val ts = ts
 }

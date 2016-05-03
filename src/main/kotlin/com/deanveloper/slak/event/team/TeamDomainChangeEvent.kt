@@ -9,6 +9,6 @@ import java.time.LocalDateTime
  * @author Dean B
  */
 class TeamDomainChangeEvent(ts: LocalDateTime) : Event {
-	override val name = "team_domain_change";
-	override val ts = ts;
+	override val name = "team_domain_change"
+	override val ts = ts
 }

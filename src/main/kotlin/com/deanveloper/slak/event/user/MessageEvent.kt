@@ -4,7 +4,7 @@ import com.deanveloper.slak.User
 import java.time.LocalDateTime
 
 class MessageEvent(user: User, ts: LocalDateTime) : UserEvent {
-	override val name = "message";
-	override val ts = ts;
-	override val user = user;
+	override val name = "message"
+	override val ts = ts
+	override val user = user
 }

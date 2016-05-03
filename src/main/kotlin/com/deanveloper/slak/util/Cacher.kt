@@ -10,16 +10,16 @@ import kotlin.concurrent.write
  * @author Dean B
  */
 open class Cacher<K, V> {
-	private val lock = ReentrantReadWriteLock();
-	private val cached: MutableMap<K, V> = mutableMapOf();
+	private val lock = ReentrantReadWriteLock()
+	private val cached: MutableMap<K, V> = mutableMapOf()
 
-	open operator fun get(index: K) = lock.read { cached[index] ?: throw RuntimeException("Index not found!") };
+	open operator fun get(index: K) = lock.read { cached[index] ?: throw RuntimeException("Index not found!") }
 
-	protected fun put(index: K, value: V) = lock.write { cached.put(index, value) };
+	protected fun put(index: K, value: V) = lock.write { cached.put(index, value) }
 
 	val keys: Set<K>
-		get() = lock.read { cached.keys };
+		get() = lock.read { cached.keys }
 
 	val values: Collection<V>
-		get() = lock.read { cached.values };
+		get() = lock.read { cached.values }
 }

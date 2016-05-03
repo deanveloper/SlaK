@@ -8,5 +8,5 @@ import java.time.LocalDateTime
  */
 class TeamProfileChangeEvent(ts: LocalDateTime) : Event {
 	override val name = "team_profile_change"
-	override val ts = ts;
+	override val ts = ts
 }

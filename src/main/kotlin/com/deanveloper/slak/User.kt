@@ -26,21 +26,21 @@ data class User private constructor(val id: String,
                                     var hasFiles: Boolean) {
 
 	init {
-		UserManager.put(if (name.startsWith('@')) name else "@$name", this);
-		UserManager.put(id, this);
+		UserManager.put(if (name.startsWith('@')) name else "@$name", this)
+		UserManager.put(id, this)
 	}
 
 	constructor(json: JsonObject) : this(json["id"].asString, json["name"].asString, json["deleted"].asBoolean,
 			Color.getColor(json["color"].asString), Profile(json["profile"].asJsonObject),
 			SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString), json["is_admin"].asBoolean,
-			json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean);
+			json["is_owner"].asBoolean, json["has_2fa"].asBoolean, json["has_files"].asBoolean)
 
 
 	companion object UserManager : Cacher<String, User>() {
 		fun start() {
 			runMethod("users.list", "token" to TOKEN) {
 				for (json in it["members"].asJsonArray) {
-					User(json.asJsonObject);
+					User(json.asJsonObject)
 				}
 			}
 		}
@@ -49,17 +49,17 @@ data class User private constructor(val id: String,
 	data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
 	                   val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
 		lateinit var imageSmall: Image
-			private set;
+			private set
 		lateinit var imageLarge: Image
-			private set;
+			private set
 
 		init {
-			SlaKScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) };
-			SlaKScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) };
+			SlaKScheduler.submit { imageSmall = ImageIO.read(URL(imageSmallUrl)) }
+			SlaKScheduler.submit { imageLarge = ImageIO.read(URL(imageLargeUrl)) }
 		}
 
 		constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,
 				json["real_name"].asString, json["email"].asString, json["skype"].asString, json["phone"].asString,
-				json["image_32"].asString, json["image_192"].asString);
+				json["image_32"].asString, json["image_192"].asString)
 	}
 }
