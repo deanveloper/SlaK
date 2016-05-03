@@ -10,9 +10,12 @@ package com.deanveloper.slak.util
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.Executors
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.ForkJoinTask
 
 
 private val executor = Executors.newCachedThreadPool()
+private val forkJoin = ForkJoinPool()
 
 fun runAsync(task: () -> Unit) {
 	executor.submit(task)
@@ -23,7 +26,7 @@ fun runLater(delay: Duration, task: () -> Unit) {
 }
 
 fun runTimer(delay: Duration, repeat: Duration, task: () -> Unit) {
-	executor.submit {
+	runAsync {
 		var execute: LocalDateTime = LocalDateTime.now() + delay
 		while (true) {
 			while (execute <= LocalDateTime.now())
@@ -33,4 +36,27 @@ fun runTimer(delay: Duration, repeat: Duration, task: () -> Unit) {
 			execute += repeat
 		}
 	}
+}
+
+fun <T> parallel(tasks: List<() -> T>): List<T> {
+	val data = mutableListOf<T>()
+	var completed: Int = 0
+
+	tasks.forEach {
+		runAsync {
+			try {
+				data.add(it())
+			} catch(e: Throwable) {
+				e.printStackTrace()
+			}
+			completed++
+		}
+	}
+
+	while(completed < data.size);
+	return data
+}
+
+fun <T> parallel(forkJoinTask: ForkJoinTask<T>): T {
+	return forkJoin(forkJoinTask)
 }
