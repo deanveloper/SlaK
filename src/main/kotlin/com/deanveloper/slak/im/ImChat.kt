@@ -1,4 +1,4 @@
-package com.deanveloper.slak.channel
+package com.deanveloper.slak.im
 
 class ImChat {
 	init {
