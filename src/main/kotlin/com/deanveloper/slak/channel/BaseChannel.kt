@@ -6,17 +6,16 @@ import com.deanveloper.slak.message.Message
 import com.deanveloper.slak.message.SimpleMessage
 import com.deanveloper.slak.runMethod
 import com.deanveloper.slak.util.Cacher
-import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.reflect.KClass
 
 /**
  * Base class for all channel-type classes
  *
  * @author Dean B
  */
-abstract class BaseChannel<T> internal constructor(
+abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
 		val id: String,
 		var name: String,
 		val created: LocalDateTime,
@@ -29,24 +28,31 @@ abstract class BaseChannel<T> internal constructor(
 ) {
 	init {
 		name = if (name.startsWith('#')) name else "#$name"
-		handler.put(name, this)
+		handler.put(name, this as T)//"this" is now smart casted to T
 		handler.put(id, this)
 	}
 
-	inner class ChannelHandler : Cacher<String, T>() {
-		fun register() {
+	abstract val handler: ChannelCompanion
 
+	abstract inner class ChannelCompanion : Cacher<String, T>() {
+		abstract fun fromJson(json: JsonObject): T
+
+		fun register() {
+			runMethod("channels.list", "token" to TOKEN, "exclude_archived" to "0") {
+				for (json in it["channels"].asJsonArray) {
+					fromJson(json.asJsonObject)
+				}
+			}
 		}
 
 		fun create(channel: String, cb: ((T) -> Unit)? = null) {
-
+			runMethod("channels.create", "name" to channel, "token" to TOKEN) { json ->
+				val created = fromJson(json["channel"].asJsonObject)
+				cb?.invoke(created)
+			}
 		}
-
-		val JsonElement.asUserList: List<User>
-			get() = this.asJsonArray.map { User[it.asString] }
 	}
 
-	val handler: ChannelHandler
 
 	fun archive(cb: () -> Unit) {
 		runMethod("$methodBase.archive", "token" to TOKEN, "channel" to id) {
@@ -70,15 +76,15 @@ abstract class BaseChannel<T> internal constructor(
 		}
 	}
 
-	fun invite(user: User, cb: ((Channel) -> Unit)? = null) {
+	fun invite(user: User, cb: ((T) -> Unit)? = null) {
 		runMethod("$methodBase.invite", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
-			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString])
+			cb?.invoke(handler[json.getAsJsonObject("channel")["id"].asString])
 		}
 	}
 
-	fun join(cb: ((Channel) -> Unit)? = null) {
+	fun join(cb: ((T) -> Unit)? = null) {
 		runMethod("$methodBase.join", "token" to TOKEN, "name" to name) { json ->
-			cb?.invoke(Channel[json.getAsJsonObject("channel")["id"].asString])
+			cb?.invoke(handler[json.getAsJsonObject("channel")["id"].asString])
 		}
 	}
 
@@ -95,7 +101,7 @@ abstract class BaseChannel<T> internal constructor(
 	}
 
 	val list: Collection<T>
-			get() = handler.values
+		get() = handler.values
 
 	fun setPurpose(purpose: String, cb: ((String) -> Unit)?) {
 		runMethod("$methodBase.setPurpose", "token" to TOKEN, "channel" to id, "purpose" to purpose) {

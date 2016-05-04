@@ -83,3 +83,6 @@ val JsonElement.asTimestamp: LocalDateTime get() {
 		throw ClassCastException("JsonElement is not a String or Number!")
 	}
 }
+
+val JsonElement.asUserList: List<User>
+	get() = this.asJsonArray.map { User[it.asString] }
