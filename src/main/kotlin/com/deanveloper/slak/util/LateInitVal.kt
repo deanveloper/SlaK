@@ -21,6 +21,6 @@ class LateInitVal<T> {
 	}
 
 	operator fun getValue(thisRef: Any?, prop: KProperty<*>): T {
-		return value!!
+		return if (initialized) value as T else throw IllegalStateException("${prop.name} is not yet initialized!")
 	}
 }
