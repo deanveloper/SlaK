@@ -1,6 +1,7 @@
 package com.deanveloper.slak
 
 import com.deanveloper.slak.util.Cacher
+import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.runAsync
 import com.google.gson.JsonObject
 import java.awt.Color
@@ -37,8 +38,8 @@ data class User private constructor(val id: String,
 
 
 	companion object UserManager : Cacher<String, User>() {
-		fun start() {
-			runMethod("users.list", "token" to TOKEN) {
+		fun start(): ErrorHandler {
+			return runMethod("users.list", "token" to TOKEN) {
 				for (json in it["members"].asJsonArray) {
 					User(json.asJsonObject)
 				}

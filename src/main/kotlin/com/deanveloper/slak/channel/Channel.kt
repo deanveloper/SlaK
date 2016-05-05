@@ -28,4 +28,3 @@ class Channel private constructor(
 				OwnedString.Topic(json["topic"].asJsonObject), OwnedString.Purpose(json["purpose"].asJsonObject))
 	}
 }
-

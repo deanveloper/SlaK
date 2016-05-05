@@ -7,6 +7,7 @@
  */
 package com.deanveloper.slak
 
+import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.LateInitVal
 import com.deanveloper.slak.util.runAsync
 import com.google.gson.JsonElement
@@ -15,17 +16,15 @@ import com.google.gson.JsonParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 
 
 var TOKEN: String by LateInitVal()
 var BASE_URL: String by LateInitVal()
 val PARSER = JsonParser()
 
-fun runMethod(method: String, vararg params: Pair<String, String>, onError: (SlaKError) -> Unit = {},
-              onWarning: (String) -> Unit = {}, cb: (JsonObject) -> Unit = {}) {
+fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit = {}): ErrorHandler {
+	val handler: ErrorHandler = ErrorHandler()
 	runAsync {
 		try {
 			val website = URL(BASE_URL + method + params.format()).openConnection()
@@ -42,15 +41,16 @@ fun runMethod(method: String, vararg params: Pair<String, String>, onError: (Sla
 					error = SlaKError.UNDOCUMENTED_ERROR
 					println(json["error"].asString)
 				}
-				onError.invoke(error)
+				handler.error?.invoke(error)
 			}
 
 			//if there's a warning, invoke onWarning
-			json["warning"]?.let { onWarning.invoke(it.asString) }
+			json["warning"]?.let { handler.warning?.invoke(it.asString) }
 		} catch (e: Exception) {
 			e.printStackTrace()
 		}
 	}
+	return handler
 }
 
 /**
@@ -66,23 +66,31 @@ private fun Array<out Pair<String, String>>.format(): String {
 	}
 }
 
-val JsonElement.asTimestamp: LocalDateTime get() {
-	if (this.isJsonPrimitive) {
-		val time: Instant
-		if (this.asJsonPrimitive.isString) {
-			val split = this.asString.split("\\.")[0]
-			time = Instant.ofEpochSecond(split[0].toLong()).plusMillis(split[1].toLong())
-		} else if (this.asJsonPrimitive.isNumber) {
-			time = Instant.ofEpochSecond(this.asLong)
+val JsonElement.asTimestamp: LocalDateTime
+	get() {
+		if (this.isJsonPrimitive) {
+			val time: Instant
+			if (this.asJsonPrimitive.isString) {
+				val split = this.asString.split("\\.")[0]
+				time = Instant.ofEpochSecond(split[0].toLong()).plusMillis(split[1].toLong())
+			} else if (this.asJsonPrimitive.isNumber) {
+				time = Instant.ofEpochSecond(this.asLong)
+			} else {
+				throw ClassCastException("JsonElement is not a String or Number!")
+			}
+
+			return LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
 		} else {
 			throw ClassCastException("JsonElement is not a String or Number!")
 		}
-
-		return LocalDateTime.ofInstant(time, ZoneId.of("UTC"))
-	} else {
-		throw ClassCastException("JsonElement is not a String or Number!")
 	}
-}
+
+val LocalDateTime.toTimestamp: String
+	get() {
+		val time: ZonedDateTime = this.atOffset(ZoneOffset.UTC).toZonedDateTime()
+		return "${time.second}.${time.nano / 1000000}"
+	}
+
 
 val JsonElement.asUserList: List<User>
 	get() = this.asJsonArray.map { User[it.asString] }
