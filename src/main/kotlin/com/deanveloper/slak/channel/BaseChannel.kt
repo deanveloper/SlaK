@@ -2,7 +2,7 @@ package com.deanveloper.slak.channel
 
 import com.deanveloper.slak.TOKEN
 import com.deanveloper.slak.User
-import com.deanveloper.slak.message.SimpleMessagePart
+import com.deanveloper.slak.message.Message
 import com.deanveloper.slak.runMethod
 import com.deanveloper.slak.util.Cacher
 import com.deanveloper.slak.util.ErrorHandler
@@ -63,7 +63,7 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
     }
 
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
-                unreads: Boolean = false, cb: (List<MessagePart<*>>) -> Unit): ErrorHandler {
+                unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
         var params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
         params.add("channel" to id)
@@ -74,7 +74,7 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
         if (unreads) params.add("unreads" to unreads.toString())
 
         return runMethod("${handler.methodBase}.history", *params.toTypedArray()) {
-            cb(it["messages"].asJsonArray.map { SimpleMessagePart(it.asJsonObject) })
+            cb(it["messages"].asJsonArray.map { Message(it.asJsonObject) })
         }
     }
 

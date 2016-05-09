@@ -1,7 +1,7 @@
 package com.deanveloper.slak.im
 
 import com.deanveloper.slak.*
-import com.deanveloper.slak.message.SimpleMessagePart
+import com.deanveloper.slak.message.Message
 import com.deanveloper.slak.util.Cacher
 import com.deanveloper.slak.util.ErrorHandler
 import java.time.LocalDateTime
@@ -66,7 +66,7 @@ class ImChat private constructor(
         if (unreads) params.add("unreads" to unreads.toString())
 
         return runMethod("im.history", "token" to TOKEN, "channel" to id) {
-            cb(it["messages"].asJsonArray.map { SimpleMessagePart(it.asJsonObject) })
+            cb(it["messages"].asJsonArray.map { Message(it.asJsonObject) })
         }
     }
 
