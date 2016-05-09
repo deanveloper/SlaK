@@ -18,6 +18,7 @@ import com.google.gson.JsonParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
+import java.net.URLEncoder
 import java.time.*
 
 
@@ -67,7 +68,7 @@ fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObje
 private fun Array<out Pair<String, String>>.format(): String {
     return buildString {
         for ((key, value) in this@format) {
-            append("$key&${value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}")
+            append("$key&${URLEncoder.encode(value, "UTF-8")}")
             this.append('&')
         }
         deleteCharAt(length - 1)

@@ -10,13 +10,13 @@ import java.time.LocalDateTime
  *
  * @author Dean B
  */
-final class SimpleMessage : Message<String> {
-    override val type = "message"
-    override val owner: User
-    override var message: String
-    override val ts: LocalDateTime
-    override var starred: Boolean
-    override var reactions: List<Reaction>
+final class SimpleMessagePart {
+    val type = "message"
+    val owner: User
+    var message: String
+    val ts: LocalDateTime
+    var starred: Boolean
+    var reactions: List<Reaction>
 
     constructor(owner: User,
                 message: String,
@@ -51,4 +51,6 @@ final class SimpleMessage : Message<String> {
                 "instead it is ${json["type"].asString}")
         }
     }
+
+    data class Reaction(val name: String, var users: Array<User>)
 }

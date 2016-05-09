@@ -1,8 +1,7 @@
 package com.deanveloper.slak.im
 
 import com.deanveloper.slak.*
-import com.deanveloper.slak.message.Message
-import com.deanveloper.slak.message.SimpleMessage
+import com.deanveloper.slak.message.SimpleMessagePart
 import com.deanveloper.slak.util.Cacher
 import com.deanveloper.slak.util.ErrorHandler
 import java.time.LocalDateTime
@@ -56,7 +55,7 @@ class ImChat private constructor(
     }
 
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
-                unreads: Boolean = false, cb: (List<Message<*>>) -> Unit): ErrorHandler {
+                unreads: Boolean = false, cb: (List<MessagePart<*>>) -> Unit): ErrorHandler {
         var params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
         params.add("channel" to id)
@@ -67,11 +66,11 @@ class ImChat private constructor(
         if (unreads) params.add("unreads" to unreads.toString())
 
         return runMethod("im.history", "token" to TOKEN, "channel" to id) {
-            cb(it["messages"].asJsonArray.map { SimpleMessage(it.asJsonObject) })
+            cb(it["messages"].asJsonArray.map { SimpleMessagePart(it.asJsonObject) })
         }
     }
 
-    fun mark(msg: Message<*>): ErrorHandler {
+    fun mark(msg: MessagePart<*>): ErrorHandler {
         return runMethod("im.mark", "token" to TOKEN, "channel" to id, "ts" to msg.ts.toTimestamp)
     }
 }
