@@ -7,6 +7,8 @@
  */
 package com.deanveloper.slak
 
+import com.deanveloper.slak.channel.Channel
+import com.deanveloper.slak.channel.Group
 import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.LateInitVal
 import com.deanveloper.slak.util.runAsync
@@ -25,6 +27,8 @@ val PARSER = JsonParser()
 
 fun start() {
     User.start()
+    Channel.start()
+    Group.start()
 }
 
 fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit = {}): ErrorHandler {
