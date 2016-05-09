@@ -24,8 +24,7 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
     val general: Boolean,
     val members: List<User>?,
     val topic: OwnedString.Topic,
-    val purpose: OwnedString.Purpose,
-    val methodBase: String
+    val purpose: OwnedString.Purpose
 ) {
     init {
         name = if (name.startsWith('#')) name else "#$name"
@@ -33,9 +32,9 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
         handler.put(id, this)
     }
 
-    abstract val handler: ChannelCompanion
+    abstract val handler: ChannelCompanion<T>
 
-    abstract inner class ChannelCompanion : Cacher<String, T>() {
+    abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<String, T>() {
         abstract fun fromJson(json: JsonObject): T
 
         fun register(): ErrorHandler {
@@ -59,7 +58,7 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
 
 
     @JvmOverloads fun archive(cb: (Boolean) -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.archive", "token" to TOKEN, "channel" to id) {
+        return runMethod("${handler.methodBase}.archive", "token" to TOKEN, "channel" to id) {
             cb(it.has("no_op"))
         }
     }
@@ -75,44 +74,44 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
         if (count > 0) params.add("count" to count.toString())
         if (unreads) params.add("unreads" to unreads.toString())
 
-        return runMethod("$methodBase.history", *params.toTypedArray()) {
+        return runMethod("${handler.methodBase}.history", *params.toTypedArray()) {
             cb(it["messages"].asJsonArray.map { SimpleMessage(it.asJsonObject) })
         }
     }
 
     @JvmOverloads fun invite(user: User, cb: (T) -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.invite", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
+        return runMethod("${handler.methodBase}.invite", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
             cb(handler[json.getAsJsonObject("channel")["id"].asString])
         }
     }
 
     @JvmOverloads fun join(cb: (T) -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.join", "token" to TOKEN, "name" to name) { json ->
+        return runMethod("${handler.methodBase}.join", "token" to TOKEN, "name" to name) { json ->
             cb(handler[json.getAsJsonObject("channel")["id"].asString])
         }
     }
 
     @JvmOverloads fun kick(user: User, cb: () -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.kick", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
+        return runMethod("${handler.methodBase}.kick", "token" to TOKEN, "channel" to id, "user" to user.id) { json ->
             cb()
         }
     }
 
     @JvmOverloads fun leave(cb: () -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.leave", "token" to TOKEN, "channel" to id) { json ->
+        return runMethod("${handler.methodBase}.leave", "token" to TOKEN, "channel" to id) { json ->
             cb()
         }
     }
 
     @JvmOverloads fun setPurpose(purpose: String, cb: (String) -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.setPurpose", "token" to TOKEN, "channel" to id, "purpose" to purpose) {
+        return runMethod("${handler.methodBase}.setPurpose", "token" to TOKEN, "channel" to id, "purpose" to purpose) {
             json ->
             cb(json["purpose"].asString)
         }
     }
 
     @JvmOverloads fun setTopic(topic: String, cb: (String) -> Unit = { }): ErrorHandler {
-        return runMethod("$methodBase.setTopic", "token" to TOKEN, "channel" to id, "topic" to topic) {
+        return runMethod("${handler.methodBase}.setTopic", "token" to TOKEN, "channel" to id, "topic" to topic) {
             json ->
             cb(json["topic"].asString)
         }

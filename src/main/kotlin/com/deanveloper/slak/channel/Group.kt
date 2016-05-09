@@ -18,8 +18,10 @@ class Group(
     members: List<User>?,
     topic: OwnedString.Topic,
     purpose: OwnedString.Purpose
-) : BaseChannel<Group>(id, name, created, archived, general, members, topic, purpose, "groups") {
-    override val handler = object : BaseChannel<Group>.ChannelCompanion() {
+) : BaseChannel<Group>(id, name, created, archived, general, members, topic, purpose) {
+    override val handler = GroupManager
+
+    companion object GroupManager : BaseChannel.ChannelCompanion<Group>("groups") {
         override fun fromJson(json: JsonObject) = Group(json["id"].asString, json["name"].asString,
             json["created"].asTimestamp, json["is_archived"].asBoolean,
             json["is_general"].asBoolean, json["members"]?.asUserList,
