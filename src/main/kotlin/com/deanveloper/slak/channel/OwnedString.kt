@@ -14,41 +14,41 @@ import java.time.LocalDateTime
  */
 sealed class OwnedString(open val owner: User, protected open val string: String, open val ts: LocalDateTime) {
 
-	/**
-	 * Represents the purpose of a channel.
-	 *
-	 * @property[owner]     the owner of the string
-	 * @property[purpose]   the purpose of the channel
-	 * @property[ts]        the time the purpose was set
-	 */
-	class Purpose(
-			override val owner: User,
-			val purpose: String,
-			override val ts: LocalDateTime
-	) : OwnedString(owner, purpose, ts) {
-		constructor(json: JsonObject) : this(
-				User[json["owner"].asString],
-				json["value"].asString,
-				json["last_set"].asTimestamp
-		)
-	}
+    /**
+     * Represents the purpose of a channel.
+     *
+     * @property[owner]     the owner of the string
+     * @property[purpose]   the purpose of the channel
+     * @property[ts]        the time the purpose was set
+     */
+    class Purpose(
+        override val owner: User,
+        val purpose: String,
+        override val ts: LocalDateTime
+    ) : OwnedString(owner, purpose, ts) {
+        constructor(json: JsonObject) : this(
+            User[json["owner"].asString],
+            json["value"].asString,
+            json["last_set"].asTimestamp
+        )
+    }
 
-	/**
-	 * Represents the topic of a channel.
-	 *
-	 * @property[owner] the owner of the string
-	 * @property[topic] the topic of the channel
-	 * @property[ts]    the time the purpose was set
-	 */
-	class Topic(
-			override val owner: User,
-			val topic: String,
-			override val ts: LocalDateTime
-	) : OwnedString(owner, topic, ts) {
-		constructor(json: JsonObject) : this(
-				User[json["owner"].asString],
-				json["value"].asString,
-				json["last_set"].asTimestamp
-		)
-	}
+    /**
+     * Represents the topic of a channel.
+     *
+     * @property[owner] the owner of the string
+     * @property[topic] the topic of the channel
+     * @property[ts]    the time the purpose was set
+     */
+    class Topic(
+        override val owner: User,
+        val topic: String,
+        override val ts: LocalDateTime
+    ) : OwnedString(owner, topic, ts) {
+        constructor(json: JsonObject) : this(
+            User[json["owner"].asString],
+            json["value"].asString,
+            json["last_set"].asTimestamp
+        )
+    }
 }

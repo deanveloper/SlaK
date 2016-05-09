@@ -11,44 +11,44 @@ import java.time.LocalDateTime
  * @author Dean B
  */
 final class SimpleMessage : Message<String> {
-	override val type = "message"
-	override val owner: User
-	override var message: String
-	override val ts: LocalDateTime
-	override var starred: Boolean
-	override var reactions: List<Reaction>
+    override val type = "message"
+    override val owner: User
+    override var message: String
+    override val ts: LocalDateTime
+    override var starred: Boolean
+    override var reactions: List<Reaction>
 
-	constructor(owner: User,
-	            message: String,
-	            ts: LocalDateTime,
-	            starred: Boolean = false,
-	            reactions: List<Reaction> = emptyList()) {
-		this.owner = owner
-		this.message = message
-		this.ts = ts
-		this.starred = starred
-		this.reactions = reactions
-	}
+    constructor(owner: User,
+                message: String,
+                ts: LocalDateTime,
+                starred: Boolean = false,
+                reactions: List<Reaction> = emptyList()) {
+        this.owner = owner
+        this.message = message
+        this.ts = ts
+        this.starred = starred
+        this.reactions = reactions
+    }
 
-	constructor(json: JsonObject) {
-		if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
-			throw IllegalArgumentException("JsonElement 'type' is not a string!")
-		}
-		if (json["type"].asString == "message") {
-			this.starred = json["is_starred"]?.asBoolean ?: false
-			this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
-					?.map {
-						Reaction(it["name"].asString,
-								it["users"].asJsonArray.map { User[it.asString] }.toTypedArray()
-						)
-					} ?: emptyList()
+    constructor(json: JsonObject) {
+        if (!(json["type"].isJsonPrimitive && json["type"].asJsonPrimitive.isString)) {
+            throw IllegalArgumentException("JsonElement 'type' is not a string!")
+        }
+        if (json["type"].asString == "message") {
+            this.starred = json["is_starred"]?.asBoolean ?: false
+            this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
+                ?.map {
+                    Reaction(it["name"].asString,
+                        it["users"].asJsonArray.map { User[it.asString] }.toTypedArray()
+                    )
+                } ?: emptyList()
 
-			this.owner = User[json["user"].asString]
-			this.message = json["text"].asString
-			this.ts = json["ts"].asTimestamp
-		} else {
-			throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
-					"instead it is ${json["type"].asString}")
-		}
-	}
+            this.owner = User[json["user"].asString]
+            this.message = json["text"].asString
+            this.ts = json["ts"].asTimestamp
+        } else {
+            throw IllegalArgumentException("JsonElement 'type' is not 'message', " +
+                "instead it is ${json["type"].asString}")
+        }
+    }
 }

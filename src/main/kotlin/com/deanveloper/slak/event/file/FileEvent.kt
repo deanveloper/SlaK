@@ -6,10 +6,10 @@ import com.deanveloper.slak.message.Comment
 import com.deanveloper.slak.message.SlaKFile
 
 interface FileEvent : Event {
-	val file: SlaKFile
+    val file: SlaKFile
 
-	interface FileCommentEvent : FileEvent, UserEvent {
-		val comment: Comment
-	}
+    interface FileCommentEvent : FileEvent, UserEvent {
+        val comment: Comment
+    }
 
 }

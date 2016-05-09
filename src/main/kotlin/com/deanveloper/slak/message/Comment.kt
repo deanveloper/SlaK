@@ -8,7 +8,7 @@ import com.deanveloper.slak.User
  * @author Dean B
  */
 class Comment(val user: User) {
-	init {
-		TODO()
-	}
+    init {
+        TODO()
+    }
 }

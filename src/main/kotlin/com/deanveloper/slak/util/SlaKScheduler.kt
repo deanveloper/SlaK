@@ -18,45 +18,45 @@ private val executor = Executors.newCachedThreadPool()
 private val forkJoin = ForkJoinPool()
 
 fun runAsync(task: () -> Unit) {
-	executor.submit(task)
+    executor.submit(task)
 }
 
 fun runLater(delay: Duration, task: () -> Unit) {
-	runTimer(delay, Duration.ofSeconds(-1), task)
+    runTimer(delay, Duration.ofSeconds(-1), task)
 }
 
 fun runTimer(delay: Duration, repeat: Duration, task: () -> Unit) {
-	runAsync {
-		var execute: LocalDateTime = LocalDateTime.now() + delay
-		while (true) {
-			while (execute <= LocalDateTime.now())
-			task();
+    runAsync {
+        var execute: LocalDateTime = LocalDateTime.now() + delay
+        while (true) {
+            while (execute <= LocalDateTime.now())
+                task();
 
-			if (repeat < Duration.ZERO) break
-			execute += repeat
-		}
-	}
+            if (repeat < Duration.ZERO) break
+            execute += repeat
+        }
+    }
 }
 
 fun <T> parallel(tasks: List<() -> T>): List<T> {
-	val data = mutableListOf<T>()
-	var completed: Int = 0
+    val data = mutableListOf<T>()
+    var completed: Int = 0
 
-	tasks.forEach {
-		runAsync {
-			try {
-				data.add(it())
-			} catch(e: Throwable) {
-				e.printStackTrace()
-			}
-			completed++
-		}
-	}
+    tasks.forEach {
+        runAsync {
+            try {
+                data.add(it())
+            } catch(e: Throwable) {
+                e.printStackTrace()
+            }
+            completed++
+        }
+    }
 
-	while(completed < data.size);
-	return data
+    while (completed < data.size);
+    return data
 }
 
 fun <T> parallel(forkJoinTask: ForkJoinTask<T>): T {
-	return forkJoin(forkJoinTask)
+    return forkJoin(forkJoinTask)
 }

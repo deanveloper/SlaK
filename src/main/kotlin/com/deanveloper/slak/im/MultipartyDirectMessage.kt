@@ -1,4 +1,5 @@
 package com.deanveloper.slak.im
+
 /**
  * Represents a direct message with multiple users
  *
