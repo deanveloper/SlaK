@@ -55,7 +55,7 @@ class ImChat private constructor(
     }
 
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
-                unreads: Boolean = false, cb: (List<MessagePart<*>>) -> Unit): ErrorHandler {
+                unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
         var params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
         params.add("channel" to id)
@@ -70,7 +70,7 @@ class ImChat private constructor(
         }
     }
 
-    fun mark(msg: MessagePart<*>): ErrorHandler {
+    fun mark(msg: Message): ErrorHandler {
         return runMethod("im.mark", "token" to TOKEN, "channel" to id, "ts" to msg.ts.toTimestamp)
     }
 }
