@@ -43,7 +43,7 @@ fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObje
     val handler: ErrorHandler = ErrorHandler()
     runAsync {
         try {
-            val website = URL("${BASE_URL.host}/$method?${params.format()}").openConnection()
+            val website = URL("https://${BASE_URL.host}/$method?${params.format()}").openConnection()
             val reader = BufferedReader(InputStreamReader(website.inputStream))
 
             val json = PARSER.parse(reader).asJsonObject
