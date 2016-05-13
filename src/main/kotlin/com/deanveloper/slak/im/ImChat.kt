@@ -44,8 +44,8 @@ class ImChat private constructor(
             }
         }
 
-        val list: Collection<ImChat>
-            get() = super.values
+        val list: Set<ImChat>
+            get() = this.values.toSet()
     }
 
     fun close(cb: (Boolean) -> Unit = { }): ErrorHandler {

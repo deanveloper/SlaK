@@ -53,8 +53,8 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
             }
         }
 
-        val list: Collection<T>
-            get() = super.values
+        val list: Set<T>
+            get() = this.values.toSet()
     }
 
 

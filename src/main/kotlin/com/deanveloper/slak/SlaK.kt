@@ -29,6 +29,7 @@ val PARSER = JsonParser()
 var hasStarted = false
 
 inline fun start(crossinline cb: () -> Unit) {
+    runMethod("auth.test", "token" to TOKEN)
     User.start() {
         Channel.start() {
             Group.start() {
@@ -43,12 +44,13 @@ fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObje
     val handler: ErrorHandler = ErrorHandler()
     runAsync {
         try {
-            val website = URL("https://${BASE_URL.host}/$method?${params.format()}").openConnection()
+            val website = URL("https://${BASE_URL.host}/api/$method?${params.format()}").openConnection()
+
             val reader = BufferedReader(InputStreamReader(website.inputStream))
 
             val json = PARSER.parse(reader).asJsonObject
             if (json["ok"].asBoolean) {
-                cb.invoke(json)
+                cb(json)
             } else {
                 val error: SlaKError
                 try {
@@ -75,8 +77,8 @@ fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObje
 private fun Array<out Pair<String, String>>.format(): String {
     return buildString {
         for ((key, value) in this@format) {
-            append("$key&${URLEncoder.encode(value, "UTF-8")}")
-            this.append('&')
+            append("$key=${URLEncoder.encode(value, "UTF-8")}")
+            append('&')
         }
         deleteCharAt(length - 1)
     }

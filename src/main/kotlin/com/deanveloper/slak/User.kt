@@ -60,16 +60,17 @@ class User private constructor(id: String,
         UserManager.put(id, this)
     }
 
-    constructor(json: JsonObject) : this(json["id"].asString,
+    constructor(json: JsonObject) : this(
+        json["id"].asString,
         json["name"].asString,
-        json["deleted"].asBoolean,
-        Color.getColor(json["color"].asString),
+        json["deleted"]?.asBoolean ?: false,
+        Color(Integer.parseInt(json["color"].asString, 16)),
         Profile(json["profile"].asJsonObject),
         SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString),
-        json["is_admin"].asBoolean,
-        json["is_owner"].asBoolean,
-        json["has_2fa"].asBoolean,
-        json["has_files"].asBoolean
+        json["is_admin"]?.asBoolean ?: false,
+        json["is_owner"]?.asBoolean ?: false,
+        json["has_2fa"]?.asBoolean ?: false,
+        json["has_files"]?.asBoolean ?: false
     )
 
 
@@ -84,24 +85,17 @@ class User private constructor(id: String,
             }
         }
 
-        val list: Collection<User>
-            get() = this.values
+        val list: Set<User>
+            get() = this.values.toSet()
     }
 
     data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
                        val skype: String?, val phone: String?, val imageSmallUrl: String, val imageLargeUrl: String) {
-        lateinit var imageSmall: Image
-            private set
-        lateinit var imageLarge: Image
-            private set
+        val imageSmall by lazy { ImageIO.read(URL(imageSmallUrl)) }
+        val imageLarge by lazy { ImageIO.read(URL(imageLargeUrl)) }
 
-        init {
-            runAsync { imageSmall = ImageIO.read(URL(imageSmallUrl)) }
-            runAsync { imageLarge = ImageIO.read(URL(imageLargeUrl)) }
-        }
-
-        constructor(json: JsonObject) : this(json["first_name"].asString, json["last_name"].asString,
-            json["real_name"].asString, json["email"].asString, json["skype"].asString, json["phone"].asString,
+        constructor(json: JsonObject) : this(json["first_name"]?.asString, json["last_name"]?.asString,
+            json["real_name"]?.asString, json["email"]?.asString, json["skype"]?.asString, json["phone"]?.asString,
             json["image_32"].asString, json["image_192"].asString)
     }
 
