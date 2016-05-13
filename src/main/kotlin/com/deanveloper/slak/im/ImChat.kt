@@ -13,7 +13,7 @@ class ImChat private constructor(
     val created: LocalDateTime,
     var isUserDeleted: Boolean
 ) {
-    companion object ImManager : Cacher<String, ImChat>() {
+    companion object ImManager : Cacher<ImChat>() {
         fun start(): ErrorHandler {
             return runMethod("im.list", "token" to TOKEN) {
                 for (json in it["im"].asJsonArray) {

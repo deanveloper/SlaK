@@ -33,14 +33,16 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
 
     abstract val handler: ChannelCompanion<T>
 
-    abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<String, T>() {
+    abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<T>() {
         abstract fun fromJson(json: JsonObject): T
 
-        fun start(): ErrorHandler {
+        inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0") {
                 for (json in it["$methodBase"].asJsonArray) {
                     fromJson(json.asJsonObject)
                 }
+
+                cb()
             }
         }
 

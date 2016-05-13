@@ -17,26 +17,33 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 import java.time.*
 
 
 var TOKEN: String by LateInitVal()
-var BASE_URL: String by LateInitVal()
+var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
+var hasStarted = false
 
-fun start() {
-    User.start()
-    Channel.start()
-    Group.start()
+inline fun start(crossinline cb: () -> Unit) {
+    User.start() {
+        Channel.start() {
+            Group.start() {
+                hasStarted = true
+                cb()
+            }
+        }
+    }
 }
 
 fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit = {}): ErrorHandler {
     val handler: ErrorHandler = ErrorHandler()
     runAsync {
         try {
-            val website = URL(BASE_URL + method + params.format()).openConnection()
+            val website = URL("${BASE_URL.host}/$method?${params.format()}").openConnection()
             val reader = BufferedReader(InputStreamReader(website.inputStream))
 
             val json = PARSER.parse(reader).asJsonObject

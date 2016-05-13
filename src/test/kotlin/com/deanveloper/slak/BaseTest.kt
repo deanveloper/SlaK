@@ -10,7 +10,13 @@ import org.junit.BeforeClass
 open class BaseTest {
     companion object {
         @BeforeClass @JvmStatic fun setUpBaseClass() {
-            start()
+            TOKEN = "xoxb-42726376804-HfRz4sBkVY8c3Dy4t8DB9Nhj"
+            BASE_URL = "https://nodestone.slack.com"
+            start() {
+                println("list: ${User.list}")
+            }
+            println("Waiting to establish connection")
+            Thread.sleep(5000)
         }
     }
 }

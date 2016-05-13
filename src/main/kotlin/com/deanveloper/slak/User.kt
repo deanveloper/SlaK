@@ -27,22 +27,22 @@ class User private constructor(id: String,
                                hasFiles: Boolean) {
     val id: String
     var name: String
-        private set
+        internal set
     var deleted: Boolean
-        private set
+        internal set
     var color: Color
-        private set
+        internal set
     val profile: Profile
     var timezone: TimeZone
-        private set
+        internal set
     var isAdmin: Boolean
-        private set
+        internal set
     var isOwner: Boolean
-        private set
+        internal set
     var has2FA: Boolean
-        private set
+        internal set
     var hasFiles: Boolean
-        private set
+        internal set
 
     init {
         this.id = id
@@ -73,14 +73,19 @@ class User private constructor(id: String,
     )
 
 
-    companion object UserManager : Cacher<String, User>() {
-        fun start(): ErrorHandler {
+    companion object UserManager : Cacher<User>() {
+        inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("users.list", "token" to TOKEN) {
                 for (json in it["members"].asJsonArray) {
                     User(json.asJsonObject)
                 }
+
+                cb()
             }
         }
+
+        val list: Collection<User>
+            get() = this.values
     }
 
     data class Profile(val firstName: String?, val lastName: String?, val realName: String?, val email: String?,
@@ -99,4 +104,9 @@ class User private constructor(id: String,
             json["real_name"].asString, json["email"].asString, json["skype"].asString, json["phone"].asString,
             json["image_32"].asString, json["image_192"].asString)
     }
+
+    override fun toString() = "User[id=$id,name=$name,deleted=$deleted,color=$color,profile=$profile," +
+        "timezone=$timezone,isAdmin=$isAdmin,isOwner=$isOwner,has2FA=$has2FA,hasFiles=$hasFiles"
+
+    override fun hashCode() = id.hashCode()
 }
