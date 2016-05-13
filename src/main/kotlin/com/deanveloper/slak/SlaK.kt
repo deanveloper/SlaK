@@ -42,6 +42,7 @@ inline fun start(crossinline cb: () -> Unit) {
 
 fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit = {}): ErrorHandler {
     val handler: ErrorHandler = ErrorHandler()
+    println("https://${BASE_URL.host}/api/$method?${params.format()}")
     runAsync {
         try {
             val website = URL("https://${BASE_URL.host}/api/$method?${params.format()}").openConnection()

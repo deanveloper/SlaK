@@ -11,7 +11,7 @@ import java.net.URI
 open class BaseTest {
     companion object {
         @BeforeClass @JvmStatic fun setUpBaseClass() {
-            TOKEN = "xoxb-42726376804-HfRz4sBkVY8c3Dy4t8DB9Nhj"
+            TOKEN = "xoxb-42726376804-zeceYGGojyCCf84X9Dmwkfiu"
             BASE_URL = URI("https://nodestone.slack.com")
             start() {
                 println("list: ${User.list}")

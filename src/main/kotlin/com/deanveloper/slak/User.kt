@@ -75,7 +75,7 @@ class User private constructor(id: String,
 
 
     companion object UserManager : Cacher<User>() {
-        inline fun start(crossinline cb: () -> Unit): ErrorHandler {
+        fun start(cb: () -> Unit): ErrorHandler {
             return runMethod("users.list", "token" to TOKEN) {
                 for (json in it["members"].asJsonArray) {
                     User(json.asJsonObject)
