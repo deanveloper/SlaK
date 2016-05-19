@@ -2,6 +2,9 @@ package com.deanveloper.slak
 
 import org.junit.BeforeClass
 import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Paths
+import javax.crypto.Cipher
 
 /**
  * The main class for JUnit tests
@@ -10,8 +13,11 @@ import java.net.URI
  */
 open class BaseTest {
     companion object {
+        val CIPHER = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC")
+        val key = Files.readAllBytes(Paths.get(System.getProperty("user.home"), "Documents", "APIKeyPassword.txt"))
+
         @BeforeClass @JvmStatic fun setUpBaseClass() {
-            TOKEN = "xoxb-42726376804-zeceYGGojyCCf84X9Dmwkfiu"
+            TOKEN =
             BASE_URL = URI("https://nodestone.slack.com")
             start() {
                 println("list: ${User.list}")
