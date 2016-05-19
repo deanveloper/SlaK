@@ -10,6 +10,8 @@ import org.junit.Test
  */
 class UserTest : BaseTest() {
     @Test fun testUser() {
-        println("list2: ${User.list}")
+        for(u in User.list) {
+            println(u)
+        }
     }
 }
