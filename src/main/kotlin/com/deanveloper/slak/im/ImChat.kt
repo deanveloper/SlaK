@@ -8,10 +8,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 class ImChat private constructor(
-    val id: String,
-    val user: User,
-    val created: LocalDateTime,
-    var isUserDeleted: Boolean
+        val id: String,
+        val user: User,
+        val created: LocalDateTime,
+        var isUserDeleted: Boolean
 ) {
     companion object ImManager : Cacher<ImChat>() {
         fun start(): ErrorHandler {
@@ -19,10 +19,10 @@ class ImChat private constructor(
                 for (json in it["im"].asJsonArray) {
                     with(it.asJsonObject) {
                         ImChat(
-                            it["id"].asString,
-                            User[it["user"].asString],
-                            it["created"].asTimestamp,
-                            it["is_user_deleted"].asBoolean
+                                it["id"].asString,
+                                User[it["user"].asString],
+                                it["created"].asTimestamp,
+                                it["is_user_deleted"].asBoolean
                         )
                     }
                 }
@@ -34,10 +34,10 @@ class ImChat private constructor(
                 for (json in it["channel"].asJsonArray) {
                     with(it.asJsonObject) {
                         ImChat(
-                            it["id"].asString,
-                            User[it["user"].asString],
-                            it["created"].asTimestamp,
-                            it["is_user_deleted"].asBoolean
+                                it["id"].asString,
+                                User[it["user"].asString],
+                                it["created"].asTimestamp,
+                                it["is_user_deleted"].asBoolean
                         )
                     }
                 }

@@ -5,19 +5,19 @@ package com.deanveloper.slak
  */
 enum class SlaKError(val desc: String) {
     INVALID_ARRAY_ARGS("The method was passed a PHP-style array argument " +
-        "(e.g. with a name like foo[7]). These are never valid with the Slack API."),
+            "(e.g. with a name like foo[7]). These are never valid with the Slack API."),
     INVALID_CHARSET("The method was called via a POST request, but the charset " +
-        "specified in the Content-Type header was invalid. Valid charset names are: utf-8 iso-8859-1."),
+            "specified in the Content-Type header was invalid. Valid charset names are: utf-8 iso-8859-1."),
     INVALID_FORM_DATA("The method was called via a POST request with Content-Type " +
-        "application/x-www-form-urlencoded or multipart/form-data, but the form data was either missing or " +
-        "syntactically invalid."),
+            "application/x-www-form-urlencoded or multipart/form-data, but the form data was either missing or " +
+            "syntactically invalid."),
     INVALID_POST_TYPE("The method was called via a POST request, but the specified " +
-        "Content-Type was invalid. Valid types are: application/json application/x-www-form-urlencoded " +
-        "multipart/form-data text/plain."),
+            "Content-Type was invalid. Valid types are: application/json application/x-www-form-urlencoded " +
+            "multipart/form-data text/plain."),
     MISSING_POST_TYPE("The method was called via a POST request and included a data " +
-        "payload, but the request did not include a Content-Type header."),
+            "payload, but the request did not include a Content-Type header."),
     REQUEST_TIMEOUT("The method was called via a POST request, but the POST data was " +
-        "either missing or truncated."),
+            "either missing or truncated."),
     NOT_AUTHED("No authentication token provided."),
     INVALID_AUTH("Invalid authentication token."),
     ACCOUNT_INACTIVE("Authentication token is for a deleted user or team."),
@@ -26,10 +26,10 @@ enum class SlaKError(val desc: String) {
     CANT_ARCHIVE_GENERAL("You cannot archive the general channel."),
     LAST_RA_CHANNEL("You cannot archive the last channel for a multi-channel guest."),
     RESTRICTED_ACTION("A team preference prevents the authenticated user from " +
-        "using this method."),
+            "using this method."),
     USER_IS_BOT("This method cannot be called by a bot user."),
     USER_IS_RESTRICTED("This method cannot be called by a restricted user or single " +
-        "channel guest."),
+            "channel guest."),
     NAME_TAKEN("A channel/group cannot be created with the given name."),
     NO_CHANNEL("Value passed for name was empty."),
     INVALID_TS_LATEST("Value passed for latest was invalid."),
@@ -50,19 +50,19 @@ enum class SlaKError(val desc: String) {
     NOT_ARCHIVED("Channel/group is not archived."),
     MESSAGE_NOT_FOUND("No message exists with the requested timestamp."),
     CANT_DELETE_MESSAGE("Authenticated user does not have permission to delete " +
-        "this message."),
+            "this message."),
     COMPLIANCE_EXPORTS_PREVENT_DELETION("Compliance exports are on, messages can not be " +
-        "deleted"),
+            "deleted"),
     MSG_TOO_LONG("Message text is too long."),
     NO_TEXT("No message text provided."),
     RATE_LIMITED("Application has posted too many messages, read the Rate Limit " +
-        "documentation for more information"),
+            "documentation for more information"),
     CANT_UPDATE_MESSAGE("Authenticated user does not have permission to update this " +
-        "message."),
+            "message."),
     EDIT_WINDOW_CLOSED("The message/comment cannot be edited due to the team message " +
-        "edit settings."),
+            "edit settings."),
     UNKNOWN_ERROR("There was a mysterious problem ending the user's Do Not Disturb " +
-        "session."),
+            "session."),
     SNOOZE_NOT_ACTIVE("Snooze is not active for this user and cannot be ended."),
     SNOOZE_END_FAILED("There was a problem setting the user's Do Not Disturb status."),
     MISSING_DURATION("No value provided for num_minutes."),
@@ -102,7 +102,7 @@ enum class SlaKError(val desc: String) {
     TOO_MANY_REACTIONS("The limit for distinct reactions (i.e emoji) on the item has been reached."),
     NO_REACTION("The specified item does not have the user/reaction combination."),
     MIGRATION_IN_PROGRESS("Team is being migrated between servers. See the team_migration_started event " +
-        "documentation for details."),
+            "documentation for details."),
     ALREADY_STARRED("The specified item has already been starred by the authenticated user."),
     NOT_STARRED("The specified item is not currently starred by the authenticated user."),
     PAID_ONLY("This is only available to paid teams."),

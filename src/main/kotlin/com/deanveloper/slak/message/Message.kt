@@ -40,9 +40,9 @@ class Message {
         this.starred = json["is_starred"]?.asBoolean ?: false
 
         this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
-            ?.map {
-                Reaction(it["name"].asString, it["users"].asJsonArray.map { User[it.asString] }.toTypedArray())
-            } ?: emptyList()
+                ?.map {
+                    Reaction(it["name"].asString, it["users"].asJsonArray.map { User[it.asString] }.toTypedArray())
+                } ?: emptyList()
 
     }
 

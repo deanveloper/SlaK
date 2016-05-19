@@ -11,15 +11,15 @@ import java.time.LocalDateTime
  * Represents a private channel
  */
 class Group(
-    id: String,
-    name: String,
-    creator: User,
-    created: LocalDateTime,
-    archived: Boolean,
-    general: Boolean,
-    members: List<User>,
-    topic: OwnedString.Topic?,
-    purpose: OwnedString.Purpose?
+        id: String,
+        name: String,
+        creator: User,
+        created: LocalDateTime,
+        archived: Boolean,
+        general: Boolean,
+        members: List<User>,
+        topic: OwnedString.Topic?,
+        purpose: OwnedString.Purpose?
 ) : BaseChannel<Group>(id, name, creator, created, archived, general, members, topic, purpose, GroupManager) {
     companion object GroupManager : BaseChannel.ChannelCompanion<Group>("groups") {
         override fun fromJson(json: JsonObject) = Group(json["id"].asString, json["name"].asString,

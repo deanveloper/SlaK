@@ -115,4 +115,4 @@ val JsonElement.asUserList: List<User>
     get() = this.asJsonArray.map { User[it.asString] }
 
 val JsonElement?.nullSafe: JsonElement?
-    get() = if(this == null || this is JsonNull) null else this
+    get() = if (this == null || this is JsonNull) null else this

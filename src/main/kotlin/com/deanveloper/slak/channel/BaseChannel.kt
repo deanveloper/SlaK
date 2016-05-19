@@ -16,16 +16,16 @@ import java.util.*
  * @author Dean B
  */
 abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
-    val id: String,
-    var name: String,
-    val creator: User,
-    val created: LocalDateTime,
-    var archived: Boolean,
-    val general: Boolean,
-    val members: List<User>,
-    val topic: OwnedString.Topic?,
-    val purpose: OwnedString.Purpose?,
-    val handler: ChannelCompanion<T>
+        val id: String,
+        var name: String,
+        val creator: User,
+        val created: LocalDateTime,
+        var archived: Boolean,
+        val general: Boolean,
+        val members: List<User>,
+        val topic: OwnedString.Topic?,
+        val purpose: OwnedString.Purpose?,
+        val handler: ChannelCompanion<T>
 ) {
     init {
         name = if (name.startsWith('#')) name else "#$name"

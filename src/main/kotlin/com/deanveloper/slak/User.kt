@@ -59,16 +59,16 @@ class User private constructor(id: String,
     }
 
     constructor(json: JsonObject) : this(
-        json["id"].asString,
-        json["name"].asString,
-        json["deleted"]?.asBoolean ?: false,
-        Color(Integer.parseInt(json["color"].nullSafe?.asString ?: "0", 16)),
-        Profile(json["profile"].asJsonObject),
-        SimpleTimeZone((json["tz_offset"].nullSafe?.asInt ?: 0) * 1000, json["tz_label"].nullSafe?.asString ?: "null"),
-        json["is_admin"]?.asBoolean ?: false,
-        json["is_owner"]?.asBoolean ?: false,
-        json["has_2fa"]?.asBoolean ?: false,
-        json["has_files"]?.asBoolean ?: false
+            json["id"].asString,
+            json["name"].asString,
+            json["deleted"]?.asBoolean ?: false,
+            Color(Integer.parseInt(json["color"].nullSafe?.asString ?: "0", 16)),
+            Profile(json["profile"].asJsonObject),
+            SimpleTimeZone((json["tz_offset"].nullSafe?.asInt ?: 0) * 1000, json["tz_label"].nullSafe?.asString ?: "null"),
+            json["is_admin"]?.asBoolean ?: false,
+            json["is_owner"]?.asBoolean ?: false,
+            json["has_2fa"]?.asBoolean ?: false,
+            json["has_files"]?.asBoolean ?: false
     )
 
 
@@ -97,12 +97,12 @@ class User private constructor(id: String,
         val imageLarge by lazy { ImageIO.read(URL(imageLargeUrl)) }
 
         constructor(json: JsonObject) : this(json["first_name"].nullSafe?.asString, json["last_name"].nullSafe?.asString,
-            json["real_name"].nullSafe?.asString, json["email"].nullSafe?.asString, json["skype"].nullSafe?.asString, json["phone"].nullSafe?.asString,
-            json["image_32"].asString, json["image_192"].asString)
+                json["real_name"].nullSafe?.asString, json["email"].nullSafe?.asString, json["skype"].nullSafe?.asString, json["phone"].nullSafe?.asString,
+                json["image_32"].asString, json["image_192"].asString)
     }
 
     override fun toString() = "User[id=$id,name=$name,deleted=$deleted,color=$color,profile=$profile," +
-        "timezone=$timezone,isAdmin=$isAdmin,isOwner=$isOwner,has2FA=$has2FA,hasFiles=$hasFiles"
+            "timezone=$timezone,isAdmin=$isAdmin,isOwner=$isOwner,has2FA=$has2FA,hasFiles=$hasFiles"
 
     override fun hashCode() = id.hashCode()
 }
