@@ -10,8 +10,6 @@ import org.junit.Test
  */
 class UserTest : BaseTest() {
     @Test fun testUser() {
-        for(u in User.list) {
-            println(u)
-        }
+        assertEquals(User["U0P9UTP62"], User["@adamjle"])
     }
 }

@@ -12,20 +12,20 @@ import com.deanveloper.slak.channel.Group
 import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.LateInitVal
 import com.deanveloper.slak.util.runAsync
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 import java.time.*
+import java.util.*
 
 
 var TOKEN: String by LateInitVal()
 var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
+val RANDOM = Random()
 var hasStarted = false
 
 inline fun start(crossinline cb: () -> Unit) {
@@ -113,3 +113,6 @@ val LocalDateTime.toTimestamp: String
 
 val JsonElement.asUserList: List<User>
     get() = this.asJsonArray.map { User[it.asString] }
+
+val JsonElement?.nullSafe: JsonElement?
+    get() = if(this == null || this is JsonNull) null else this

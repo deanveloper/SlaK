@@ -2,10 +2,8 @@ package com.deanveloper.slak
 
 import com.deanveloper.slak.util.Cacher
 import com.deanveloper.slak.util.ErrorHandler
-import com.deanveloper.slak.util.runAsync
 import com.google.gson.JsonObject
 import java.awt.Color
-import java.awt.Image
 import java.net.URL
 import java.util.*
 import javax.imageio.ImageIO
@@ -64,9 +62,9 @@ class User private constructor(id: String,
         json["id"].asString,
         json["name"].asString,
         json["deleted"]?.asBoolean ?: false,
-        Color(Integer.parseInt(json["color"].asString, 16)),
+        Color(Integer.parseInt(json["color"].nullSafe?.asString ?: "0", 16)),
         Profile(json["profile"].asJsonObject),
-        SimpleTimeZone(json["tz_offset"].asInt * 1000, json["tz_label"].asString),
+        SimpleTimeZone((json["tz_offset"].nullSafe?.asInt ?: 0) * 1000, json["tz_label"].nullSafe?.asString ?: "null"),
         json["is_admin"]?.asBoolean ?: false,
         json["is_owner"]?.asBoolean ?: false,
         json["has_2fa"]?.asBoolean ?: false,
@@ -75,10 +73,14 @@ class User private constructor(id: String,
 
 
     companion object UserManager : Cacher<User>() {
-        fun start(cb: () -> Unit): ErrorHandler {
+        inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("users.list", "token" to TOKEN) {
                 for (json in it["members"].asJsonArray) {
-                    User(json.asJsonObject)
+                    try {
+                        User(json.asJsonObject)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 cb()
@@ -94,8 +96,8 @@ class User private constructor(id: String,
         val imageSmall by lazy { ImageIO.read(URL(imageSmallUrl)) }
         val imageLarge by lazy { ImageIO.read(URL(imageLargeUrl)) }
 
-        constructor(json: JsonObject) : this(json["first_name"]?.asString, json["last_name"]?.asString,
-            json["real_name"]?.asString, json["email"]?.asString, json["skype"]?.asString, json["phone"]?.asString,
+        constructor(json: JsonObject) : this(json["first_name"].nullSafe?.asString, json["last_name"].nullSafe?.asString,
+            json["real_name"].nullSafe?.asString, json["email"].nullSafe?.asString, json["skype"].nullSafe?.asString, json["phone"].nullSafe?.asString,
             json["image_32"].asString, json["image_192"].asString)
     }
 
