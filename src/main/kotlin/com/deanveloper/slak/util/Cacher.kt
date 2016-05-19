@@ -15,7 +15,7 @@ open class Cacher<V> {
 
     operator fun get(index: String): V {
         return lock.read {
-            cached[index.toLowerCase()] ?: throw RuntimeException("Index not found!")
+            cached[index.toLowerCase()] ?: throw RuntimeException("Index not found: $index")
         }
     }
 

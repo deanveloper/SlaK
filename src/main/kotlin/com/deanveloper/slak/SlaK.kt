@@ -30,9 +30,9 @@ var hasStarted = false
 
 inline fun start(crossinline cb: () -> Unit) {
     runMethod("auth.test", "token" to TOKEN)
-    User.start() {
-        Channel.start() {
-            Group.start() {
+    User.start {
+        Channel.start {
+            Group.start {
                 hasStarted = true
                 cb()
             }

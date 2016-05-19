@@ -18,6 +18,7 @@ import java.util.*
 abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
     val id: String,
     var name: String,
+    val creator: User,
     val created: LocalDateTime,
     var archived: Boolean,
     val general: Boolean,

@@ -11,5 +11,6 @@ import org.junit.Test
 class UserTest : BaseTest() {
     @Test fun testUser() {
         assertEquals(User["U0P9UTP62"], User["@adamjle"])
+        assertEquals(User["@dean"].profile.email, "deanvelopermn@gmail.com")
     }
 }

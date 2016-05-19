@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec
  */
 open class BaseTest {
 	companion object {
+		var initialized = false
 		val CIPHER = Cipher.getInstance("AES")
 		val KEY = SecretKeySpec(Files.readAllBytes(Paths.get(System.getProperty("user.home"), "pass.txt")), "AES")
 		val encryptedToken = byteArrayOf(0xd5.toByte(), 0x7b, 0x79, 0x48, 0x0b, 0xaf.toByte(), 0x72, 0x8c.toByte(),
@@ -26,15 +27,22 @@ open class BaseTest {
 
 
 		@BeforeClass @JvmStatic fun setUpBaseClass() {
-			CIPHER.init(Cipher.DECRYPT_MODE, KEY)
-
-			TOKEN = CIPHER.doFinal(encryptedToken).toString(Charset.defaultCharset())
-			BASE_URL = URI("https://nodestone.slack.com")
-			start() {
-				println("list: ${User.list}")
+			if (!initialized) {
+				initialized = true
+			} else {
+				return
 			}
-			println("Waiting to establish connection")
-			Thread.sleep(5000)
+
+			CIPHER.init(Cipher.DECRYPT_MODE, KEY)
+			TOKEN = CIPHER.doFinal(encryptedToken).toString(Charset.defaultCharset())
+
+			BASE_URL = URI("https://nodestone.slack.com")
+
+			var done = false
+			start {
+				done = true
+			}
+			while(!done);
 		}
 	}
 }
