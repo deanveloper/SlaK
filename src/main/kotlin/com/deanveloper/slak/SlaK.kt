@@ -19,13 +19,11 @@ import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
 import java.time.*
-import java.util.*
 
 
 var TOKEN: String by LateInitVal()
 var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
-val RANDOM = Random()
 var hasStarted = false
 
 inline fun start(crossinline cb: () -> Unit) {
