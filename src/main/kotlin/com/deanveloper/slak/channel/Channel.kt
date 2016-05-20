@@ -23,10 +23,16 @@ class Channel private constructor(
 ) : BaseChannel<Channel>(id, name, creator, created, archived, general, members, topic, purpose, ChannelManager) {
 
     companion object ChannelManager : BaseChannel.ChannelCompanion<Channel>("channels") {
-        override fun fromJson(json: JsonObject) = Channel(json["id"].asString, json["name"].asString,
-                User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"].asBoolean,
-                json["is_general"].asBoolean, json["members"].nullSafe?.asUserList ?: emptyList(),
-                if (json["topic"].nullSafe == null) OwnedString.Topic(json["topic"].asJsonObject) else null,
-                if (json["purpose"].nullSafe == null) OwnedString.Purpose(json["purpose"].asJsonObject) else null)
+        override fun fromJson(json: JsonObject): Channel {
+            if(!(json["is_channel"]?.asBoolean ?: false)) {
+                throw IllegalArgumentException("json does not represent a channel!")
+            }
+
+            return Channel(json["id"].asString, json["name"].asString,
+                    User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"].asBoolean,
+                    json["is_general"].asBoolean, json["members"].nullSafe?.asUserList ?: emptyList(),
+                    if (json["topic"].nullSafe == null) OwnedString.Topic(json["topic"].asJsonObject) else null,
+                    if (json["purpose"].nullSafe == null) OwnedString.Purpose(json["purpose"].asJsonObject) else null)
+        }
     }
 }

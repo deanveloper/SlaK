@@ -87,6 +87,25 @@ class User private constructor(id: String,
             }
         }
 
+        protected fun fromJson(json: JsonObject): User {
+            if(json["is_user"]?.asBoolean ?: false) {
+                throw IllegalArgumentException("json does not represent a User")
+            }
+
+            return User(
+                    json["id"].asString,
+                    json["name"].asString,
+                    json["deleted"]?.asBoolean ?: false,
+                    Color(Integer.parseInt(json["color"].nullSafe?.asString ?: "0", 16)),
+                    Profile(json["profile"].asJsonObject),
+                    SimpleTimeZone((json["tz_offset"].nullSafe?.asInt ?: 0) * 1000, json["tz_label"].nullSafe?.asString ?: "null"),
+                    json["is_admin"]?.asBoolean ?: false,
+                    json["is_owner"]?.asBoolean ?: false,
+                    json["has_2fa"]?.asBoolean ?: false,
+                    json["has_files"]?.asBoolean ?: false
+            )
+        }
+
         val list: Set<User>
             get() = this.values.toSet()
     }
@@ -105,4 +124,10 @@ class User private constructor(id: String,
             "timezone=$timezone,isAdmin=$isAdmin,isOwner=$isOwner,has2FA=$has2FA,hasFiles=$hasFiles"
 
     override fun hashCode() = id.hashCode()
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+
+        return id == (other as? User)?.id
+    }
 }

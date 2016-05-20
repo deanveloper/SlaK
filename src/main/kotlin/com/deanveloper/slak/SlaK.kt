@@ -9,6 +9,8 @@ package com.deanveloper.slak
 
 import com.deanveloper.slak.channel.Channel
 import com.deanveloper.slak.channel.Group
+import com.deanveloper.slak.im.ImChat
+import com.deanveloper.slak.im.MpimChat
 import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.LateInitVal
 import com.deanveloper.slak.util.runAsync
@@ -24,17 +26,24 @@ import java.time.*
 var TOKEN: String by LateInitVal()
 var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
-var hasStarted = false
 
 inline fun start(crossinline cb: () -> Unit) {
     runMethod("auth.test", "token" to TOKEN)
     User.start {
-        Channel.start {
-            Group.start {
-                hasStarted = true
+        var done = 0
+
+        val checkDone: () -> Unit = {
+            if(done == 4) {
                 cb()
+            } else {
+                done++
             }
         }
+
+        Channel.start(checkDone)
+        Group.start(checkDone)
+        ImChat.start(checkDone)
+        MpimChat.start(checkDone)
     }
 }
 

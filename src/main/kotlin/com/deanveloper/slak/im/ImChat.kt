@@ -13,8 +13,13 @@ class ImChat private constructor(
         val created: LocalDateTime,
         var isUserDeleted: Boolean
 ) {
+    init {
+        ImManager.put(id, this)
+        ImManager.put(user.id, this)
+    }
+
     companion object ImManager : Cacher<ImChat>() {
-        fun start(): ErrorHandler {
+        fun start(cb: () -> Unit): ErrorHandler {
             return runMethod("im.list", "token" to TOKEN) {
                 for (json in it["im"].asJsonArray) {
                     with(it.asJsonObject) {
@@ -26,6 +31,7 @@ class ImChat private constructor(
                         )
                     }
                 }
+                cb()
             }
         }
 

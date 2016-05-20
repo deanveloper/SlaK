@@ -22,11 +22,14 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
         val created: LocalDateTime,
         var archived: Boolean,
         val general: Boolean,
-        val members: List<User>,
+        members: List<User>,
         val topic: OwnedString.Topic?,
         val purpose: OwnedString.Purpose?,
         val handler: ChannelCompanion<T>
 ) {
+    var members = members
+        private set
+
     init {
         name = if (name.startsWith('#')) name else "#$name"
         handler.put(name, this as T)//"this" is now smart casted to T
@@ -34,7 +37,7 @@ abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
     }
 
     abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<T>() {
-        abstract fun fromJson(json: JsonObject): T
+        abstract protected fun fromJson(json: JsonObject): T
 
         inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0") {
