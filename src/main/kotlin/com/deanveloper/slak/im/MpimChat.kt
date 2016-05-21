@@ -44,7 +44,7 @@ class MpimChat private constructor(
     companion object MpimManager : Cacher<MpimChat>() {
         fun start(cb: () -> Unit): ErrorHandler {
             return runMethod("mpim.list", "token" to TOKEN) {
-                for(elem in it["groups"].asJsonArray) {
+                for (elem in it["groups"].asJsonArray) {
                     fromJson(elem.asJsonObject)
                 }
 
@@ -53,15 +53,15 @@ class MpimChat private constructor(
         }
 
         fun fromJson(json: JsonObject): MpimChat {
-            if(!(json["is_mpim"]?.asBoolean ?: false)) {
+            if (!(json["is_mpim"]?.asBoolean ?: false)) {
                 throw IllegalArgumentException("json does not represent an mpim")
             }
 
             return MpimChat(json["id"].asString, json["name"].asString,
-            User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"].asBoolean,
-            json["members"].nullSafe?.asUserList ?: emptyList(),
-            if (json["topic"].nullSafe == null) OwnedString.Topic(json["topic"].asJsonObject) else null,
-            if (json["purpose"].nullSafe == null) OwnedString.Purpose(json["purpose"].asJsonObject) else null)
+                    User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"].asBoolean,
+                    json["members"].nullSafe?.asUserList ?: emptyList(),
+                    if (json["topic"].nullSafe == null) OwnedString.Topic(json["topic"].asJsonObject) else null,
+                    if (json["purpose"].nullSafe == null) OwnedString.Purpose(json["purpose"].asJsonObject) else null)
         }
     }
 }

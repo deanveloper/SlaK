@@ -24,7 +24,7 @@ class Channel private constructor(
 
     companion object ChannelManager : BaseChannel.ChannelCompanion<Channel>("channels") {
         override fun fromJson(json: JsonObject): Channel {
-            if(!(json["is_channel"]?.asBoolean ?: false)) {
+            if (!(json["is_channel"]?.asBoolean ?: false)) {
                 throw IllegalArgumentException("json does not represent a channel!")
             }
 

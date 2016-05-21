@@ -33,7 +33,7 @@ inline fun start(crossinline cb: () -> Unit) {
         var done = 0
 
         val checkDone: () -> Unit = {
-            if(done == 4) {
+            if (done == 4) {
                 cb()
             } else {
                 done++

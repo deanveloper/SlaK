@@ -23,7 +23,7 @@ class Group(
 ) : BaseChannel<Group>(id, name, creator, created, archived, general, members, topic, purpose, GroupManager) {
     companion object GroupManager : BaseChannel.ChannelCompanion<Group>("groups") {
         override fun fromJson(json: JsonObject): Group {
-            if(!(json["is_group"]?.asBoolean ?: false)) {
+            if (!(json["is_group"]?.asBoolean ?: false)) {
                 throw IllegalArgumentException("json does not represent a group!")
             }
 
