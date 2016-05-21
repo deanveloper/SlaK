@@ -15,23 +15,36 @@ import java.util.*
  *
  * @author Dean B
  */
-abstract class BaseChannel<T : BaseChannel<T>> internal constructor(
-        val id: String,
-        var name: String,
-        val creator: User,
-        val created: LocalDateTime,
-        var archived: Boolean,
-        val general: Boolean,
+abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
+        id: String,
+        name: String,
+        creator: User,
+        created: LocalDateTime,
+        archived: Boolean,
+        general: Boolean,
         members: List<User>,
-        val topic: OwnedString.Topic?,
-        val purpose: OwnedString.Purpose?,
-        val handler: ChannelCompanion<T>
+        topic: OwnedString.Topic?,
+        purpose: OwnedString.Purpose?,
+        handler: ChannelCompanion<T>
 ) {
+    val id = id
+    var name = name
+        private set
+    val creator = creator
+    val created = created
+    var archived = archived
+        private set
+    val general = general
+    var topic = topic
+        private set
+    var purpose = purpose
+        private set
     var members = members
         private set
+    val handler = handler
 
     init {
-        name = if (name.startsWith('#')) name else "#$name"
+        this.name = if (name.startsWith('#')) name else "#$name"
         handler.put(name, this as T)//"this" is now smart casted to T
         handler.put(id, this)
     }

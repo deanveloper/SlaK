@@ -13,16 +13,18 @@ import javax.imageio.ImageIO
  *
  * @author Dean B
  */
-class User private constructor(id: String,
-                               name: String,
-                               deleted: Boolean,
-                               color: Color,
-                               profile: Profile,
-                               timezone: TimeZone,
-                               isAdmin: Boolean,
-                               isOwner: Boolean,
-                               has2FA: Boolean,
-                               hasFiles: Boolean) {
+class User private constructor(
+        id: String,
+        name: String,
+        deleted: Boolean,
+        color: Color,
+        profile: Profile,
+        timezone: TimeZone,
+        isAdmin: Boolean,
+        isOwner: Boolean,
+        has2FA: Boolean,
+        hasFiles: Boolean
+) {
     val id: String
     var name: String
         internal set
@@ -88,7 +90,7 @@ class User private constructor(id: String,
         }
 
         protected fun fromJson(json: JsonObject): User {
-            if(json["is_user"]?.asBoolean ?: false) {
+            if (json["is_user"]?.asBoolean ?: false) {
                 throw IllegalArgumentException("json does not represent a User")
             }
 
@@ -125,7 +127,7 @@ class User private constructor(id: String,
 
     override fun hashCode() = id.hashCode()
 
-    override fun equals(other: Any?): Boolean{
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
 
         return id == (other as? User)?.id

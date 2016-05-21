@@ -1,11 +1,9 @@
 package com.deanveloper.slak.im
 
-import com.deanveloper.slak.User
-import com.deanveloper.slak.asTimestamp
-import com.deanveloper.slak.asUserList
-import com.deanveloper.slak.channel.BaseChannel
+import com.deanveloper.slak.*
 import com.deanveloper.slak.channel.OwnedString
-import com.deanveloper.slak.nullSafe
+import com.deanveloper.slak.util.Cacher
+import com.deanveloper.slak.util.ErrorHandler
 import com.google.gson.JsonObject
 import java.time.LocalDateTime
 
@@ -23,9 +21,38 @@ class MpimChat private constructor(
         members: List<User>,
         topic: OwnedString.Topic?,
         purpose: OwnedString.Purpose?
-) : BaseChannel<MpimChat>(id, name, creator, created, archived, false, members, topic, purpose, MpimManager) {
-    companion object MpimManager : ChannelCompanion<MpimChat>("mpim") {
-        override fun fromJson(json: JsonObject): MpimChat {
+) {
+    val id = id
+    var name = name
+        private set
+    val creator = creator
+    val created = created
+    var archived = archived
+        private set
+    var topic = topic
+        private set
+    var purpose = purpose
+        private set
+    var members = members
+        private set
+
+    init {
+        MpimManager.put(id, this)
+        MpimManager.put(name, this)
+    }
+
+    companion object MpimManager : Cacher<MpimChat>() {
+        fun start(cb: () -> Unit): ErrorHandler {
+            return runMethod("mpim.list", "token" to TOKEN) {
+                for(elem in it["groups"].asJsonArray) {
+                    fromJson(elem.asJsonObject)
+                }
+
+                cb()
+            }
+        }
+
+        fun fromJson(json: JsonObject): MpimChat {
             if(!(json["is_mpim"]?.asBoolean ?: false)) {
                 throw IllegalArgumentException("json does not represent an mpim")
             }
