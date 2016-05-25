@@ -27,23 +27,43 @@ var TOKEN: String by LateInitVal()
 var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
 
+private fun checkDone() {
+
+}
+
 inline fun start(crossinline cb: () -> Unit) {
     runMethod("auth.test", "token" to TOKEN)
     User.start {
         var done = 0
 
-        val checkDone: () -> Unit = {
-            if (done == 4) {
+        Channel.start {
+            done++
+            println("channel")
+            if(done == 4) {
                 cb()
-            } else {
-                done++
             }
         }
-
-        Channel.start(checkDone)
-        Group.start(checkDone)
-        ImChat.start(checkDone)
-        MpimChat.start(checkDone)
+        Group.start {
+            done++
+            println("group")
+            if(done == 4) {
+                cb()
+            }
+        }
+        ImChat.start {
+            done++
+            println("im")
+            if(done == 4) {
+                cb()
+            }
+        }
+        MpimChat.start {
+            done++
+            println("mpim")
+            if(done == 4) {
+                cb()
+            }
+        }
     }
 }
 

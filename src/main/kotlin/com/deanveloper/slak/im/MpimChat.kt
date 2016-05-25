@@ -43,7 +43,7 @@ class MpimChat private constructor(
 
     companion object MpimManager : Cacher<MpimChat>() {
         fun start(cb: () -> Unit): ErrorHandler {
-            return runMethod("mpim.list", "token" to TOKEN) {
+            return runMethod("mpim.list", "token" to TOKEN, "exclude_archived" to "0") {
                 for (elem in it["groups"].asJsonArray) {
                     fromJson(elem.asJsonObject)
                 }
