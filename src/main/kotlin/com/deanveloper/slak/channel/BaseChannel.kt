@@ -45,7 +45,11 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
 
     init {
         this.name = if (name.startsWith('#')) name else "#$name"
-        handler.put(name, this as T)//"this" is now smart casted to T
+
+        @Suppress("UNCHECKED_CAST")
+        (this as T) //smart cast
+
+        handler.put(name, this)
         handler.put(id, this)
     }
 
