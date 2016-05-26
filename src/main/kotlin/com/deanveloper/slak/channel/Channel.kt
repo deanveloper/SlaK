@@ -24,9 +24,11 @@ class Channel private constructor(
 
     companion object ChannelManager : BaseChannel.ChannelCompanion<Channel>("channels") {
         override fun fromJson(json: JsonObject): Channel {
+            println("[$methodBase] Checking if it's a channel")
             if (!(json["is_channel"]?.asBoolean ?: false)) {
                 throw IllegalArgumentException("json does not represent a channel!")
             }
+            println("[$methodBase] it's a channel, now parsing json")
 
             return Channel(json["id"].asString, json["name"].asString,
                     User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"].asBoolean,

@@ -77,6 +77,6 @@ class ImChat private constructor(
     }
 
     fun mark(msg: Message): ErrorHandler {
-        return runMethod("im.mark", "token" to TOKEN, "channel" to id, "ts" to msg.ts.toTimestamp)
+        return runMethod("im.mark", "token" to TOKEN, "channel" to id, "ts" to msg.ts.toTimestamp) {}
     }
 }

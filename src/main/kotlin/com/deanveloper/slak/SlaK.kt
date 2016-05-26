@@ -32,42 +32,43 @@ private fun checkDone() {
 }
 
 inline fun start(crossinline cb: () -> Unit) {
-    runMethod("auth.test", "token" to TOKEN)
-    User.start {
-        var done = 0
+    runMethod("auth.test", "token" to TOKEN) {
+        User.start {
+            var done = 0
 
-        Channel.start {
-            done++
-            println("channel")
-            if(done == 4) {
-                cb()
+            Channel.start {
+                done++
+                println("channel")
+                if (done == 4) {
+                    cb()
+                }
             }
-        }
-        Group.start {
-            done++
-            println("group")
-            if(done == 4) {
-                cb()
+            Group.start {
+                done++
+                println("group")
+                if (done == 4) {
+                    cb()
+                }
             }
-        }
-        ImChat.start {
-            done++
-            println("im")
-            if(done == 4) {
-                cb()
+            ImChat.start {
+                done++
+                println("im")
+                if (done == 4) {
+                    cb()
+                }
             }
-        }
-        MpimChat.start {
-            done++
-            println("mpim")
-            if(done == 4) {
-                cb()
+            MpimChat.start {
+                done++
+                println("mpim")
+                if (done == 4) {
+                    cb()
+                }
             }
         }
     }
 }
 
-fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit = {}): ErrorHandler {
+inline fun runMethod(method: String, vararg params: Pair<String, String>, crossinline cb: (JsonObject) -> Unit): ErrorHandler {
     val handler: ErrorHandler = ErrorHandler()
     println("https://${BASE_URL.host}/api/$method?${params.format()}")
     runAsync {
@@ -102,7 +103,7 @@ fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObje
 /**
  * Turns an array of paired strings into a single formatted string.
  */
-private fun Array<out Pair<String, String>>.format(): String {
+fun Array<out Pair<String, String>>.format(): String {
     return buildString {
         for ((key, value) in this@format) {
             append("$key=${URLEncoder.encode(value, "UTF-8")}")

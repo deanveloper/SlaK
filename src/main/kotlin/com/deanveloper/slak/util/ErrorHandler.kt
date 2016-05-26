@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock
 class ErrorHandler {
     private val errorLock: Lock = ReentrantLock()
     private val warningLock: Lock = ReentrantLock()
-    var error: ((SlaKError) -> ErrorHandler)? = null
+    var error: ((SlaKError) -> Unit)? = null
         get() {
             lock(errorLock) {
                 return field
@@ -23,7 +23,7 @@ class ErrorHandler {
                 field = value
             }
         }
-    var warning: ((String) -> ErrorHandler)? = null
+    var warning: ((String) -> Unit)? = null
         get() {
             lock(warningLock) {
                 return field
@@ -35,12 +35,12 @@ class ErrorHandler {
             }
         }
 
-    fun onError(cb: (SlaKError) -> ErrorHandler): ErrorHandler {
+    fun onError(cb: (SlaKError) -> Unit): ErrorHandler {
         error = cb
         return this
     }
 
-    fun onWarning(cb: (String) -> ErrorHandler): ErrorHandler {
+    fun onWarning(cb: (String) -> Unit): ErrorHandler {
         warning = cb
         return this
     }

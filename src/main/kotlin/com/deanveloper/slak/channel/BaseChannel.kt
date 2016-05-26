@@ -54,8 +54,11 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
 
         inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0") {
+                println("[$methodBase] callback called")
                 for (json in it["$methodBase"].asJsonArray) {
+                    println("[$methodBase] looping through array element")
                     fromJson(json.asJsonObject)
+                    println("[$methodBase] json parsed")
                 }
 
                 cb()
@@ -82,7 +85,7 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
 
     fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
                 unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
-        var params = ArrayList<Pair<String, String>>(5)
+        val params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
         params.add("channel" to id)
         if (latest > 0) params.add("latest" to latest.toString())
