@@ -61,7 +61,7 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
                 println("[$methodBase] callback called")
                 for (json in it["$methodBase"].asJsonArray) {
                     println("[$methodBase] looping through array element")
-                    fromJson(json.asJsonObject)
+                    fromJson(json.asJsonObject) //this method never gets called
                     println("[$methodBase] json parsed")
                 }
 
