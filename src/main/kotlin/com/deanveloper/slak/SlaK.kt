@@ -32,6 +32,9 @@ private fun checkDone() {
 }
 
 inline fun start(crossinline cb: () -> Unit) {
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+        throwable.printStackTrace()
+    }
     runMethod("auth.test", "token" to TOKEN) {
         User.start {
             var done = 0
