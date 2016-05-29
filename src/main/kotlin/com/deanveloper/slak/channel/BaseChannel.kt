@@ -4,6 +4,7 @@ import com.deanveloper.slak.TOKEN
 import com.deanveloper.slak.User
 import com.deanveloper.slak.message.Message
 import com.deanveloper.slak.runMethod
+import com.deanveloper.slak.runMethodSync
 import com.deanveloper.slak.util.Cacher
 import com.deanveloper.slak.util.ErrorHandler
 import com.google.gson.JsonObject
@@ -44,7 +45,6 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
     val handler = handler
 
     init {
-        println("initializing $name")
         this.name = if (name.startsWith('#')) name else "#$name"
 
         @Suppress("UNCHECKED_CAST")
@@ -57,17 +57,14 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
     abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<T>() {
         abstract fun fromJson(json: JsonObject): T
 
-        inline fun start(crossinline cb: () -> Unit): ErrorHandler {
-            return runMethod("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0") {
-                for (json in it["$methodBase"].asJsonArray) {
-                    try {
-                        fromJson(json.asJsonObject) //this method never gets called
-                    } catch(e: Throwable) {
-                        e.printStackTrace()
-                    }
+        fun start() {
+            val json = runMethodSync("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0")
+            for (elem in json["$methodBase"].asJsonArray) {
+                try {
+                    fromJson(elem.asJsonObject) //this method never gets called
+                } catch(e: Throwable) {
+                    e.printStackTrace()
                 }
-
-                cb()
             }
         }
 

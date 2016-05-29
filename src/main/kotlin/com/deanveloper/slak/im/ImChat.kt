@@ -8,10 +8,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 class ImChat private constructor(
-    val id: String,
-    val user: User,
-    val created: LocalDateTime,
-    var isUserDeleted: Boolean
+        val id: String,
+        val user: User,
+        val created: LocalDateTime,
+        var isUserDeleted: Boolean
 ) {
     init {
         ImManager.put(id, this)
@@ -19,19 +19,17 @@ class ImChat private constructor(
     }
 
     companion object ImManager : Cacher<ImChat>() {
-        fun start(cb: () -> Unit): ErrorHandler {
-            return runMethod("im.list", "token" to TOKEN, "exclude_archived" to "0") {
-                for (json in it["ims"].asJsonArray) {
-                    with(json.asJsonObject) {
-                        ImChat(
+        fun start() {
+            val json = runMethodSync("im.list", "token" to TOKEN, "exclude_archived" to "0")
+            for (elem in json["ims"].asJsonArray) {
+                with(elem.asJsonObject) {
+                    ImChat(
                             this["id"].asString,
                             User[this["user"].asString],
                             this["created"].asTimestamp,
                             this["is_user_deleted"].asBoolean
-                        )
-                    }
+                    )
                 }
-                cb()
             }
         }
 
@@ -40,10 +38,10 @@ class ImChat private constructor(
                 for (json in it["channel"].asJsonArray) {
                     with(it.asJsonObject) {
                         ImChat(
-                            it["id"].asString,
-                            User[it["user"].asString],
-                            it["created"].asTimestamp,
-                            it["is_user_deleted"].asBoolean
+                                it["id"].asString,
+                                User[it["user"].asString],
+                                it["created"].asTimestamp,
+                                it["is_user_deleted"].asBoolean
                         )
                     }
                 }

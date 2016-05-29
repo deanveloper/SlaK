@@ -53,7 +53,7 @@ fun <T> parallel(tasks: List<() -> T>): List<T> {
         }
     }
 
-    while (completed < data.size);
+    while (completed < tasks.size);
     return data
 }
 

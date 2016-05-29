@@ -4,6 +4,7 @@ import com.deanveloper.slak.User
 import com.deanveloper.slak.asTimestamp
 import com.google.gson.JsonObject
 import java.time.LocalDateTime
+import java.util.*
 
 /**
  * Represents a simple message.
@@ -46,5 +47,12 @@ class Message {
 
     }
 
-    data class Reaction(val name: String, var users: Array<User>)
+    data class Reaction(val name: String, var users: Array<User>) {
+        override fun equals(other: Any?): Boolean {
+            if(other !is Reaction) return false //smart cast! :)
+            return name == other.name && Arrays.equals(users, other.users)
+        }
+        override fun hashCode() = name.hashCode() xor users.size
+        override fun toString() = "Reaction[name=$name,users=${users.joinToString(",")}"
+    }
 }

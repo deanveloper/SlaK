@@ -13,6 +13,7 @@ import com.deanveloper.slak.im.ImChat
 import com.deanveloper.slak.im.MpimChat
 import com.deanveloper.slak.util.ErrorHandler
 import com.deanveloper.slak.util.LateInitVal
+import com.deanveloper.slak.util.parallel
 import com.deanveloper.slak.util.runAsync
 import com.google.gson.*
 import java.io.BufferedReader
@@ -33,68 +34,53 @@ inline fun start(crossinline cb: () -> Unit) {
     }
     runMethod("auth.test", "token" to TOKEN) {
         User.start {
-            var done = 0
-
-            Channel.start {
-                done++
-                println("channel")
-                if (done == 4) {
-                    cb()
-                }
-            }
-            Group.start {
-                done++
-                println("group")
-                if (done == 4) {
-                    cb()
-                }
-            }
-            ImChat.start {
-                done++
-                println("im")
-                if (done == 4) {
-                    cb()
-                }
-            }
-            MpimChat.start {
-                done++
-                println("mpim")
-                if (done == 4) {
-                    cb()
-                }
-            }
+            parallel(listOf(
+                    { Channel.start() },
+                    { Group.start() },
+                    { ImChat.start() },
+                    { MpimChat.start() }
+            ))
+            cb()
         }
     }
 }
 
-inline fun runMethod(method: String, vararg params: Pair<String, String>, crossinline cb: (JsonObject) -> Unit): ErrorHandler {
-    val handler: ErrorHandler = ErrorHandler()
+fun runMethodSync(method: String, vararg params: Pair<String, String>, handler: ErrorHandler? = null): JsonObject {
     println("https://${BASE_URL.host}/api/$method?${params.format()}")
-    runAsync {
-        try {
-            val website = URL("https://${BASE_URL.host}/api/$method?${params.format()}").openConnection()
+    try {
+        val website = URL("https://${BASE_URL.host}/api/$method?${params.format()}").openConnection()
 
-            val reader = BufferedReader(InputStreamReader(website.inputStream))
+        val reader = BufferedReader(InputStreamReader(website.inputStream))
 
-            val json = PARSER.parse(reader).asJsonObject
-            if (json["ok"].asBoolean) {
-                cb(json)
-            } else {
-                val error: SlaKError
-                try {
-                    error = SlaKError.valueOf(json["error"].asString)
-                } catch (e: Exception) {
-                    error = SlaKError.UNDOCUMENTED_ERROR
-                    println(json["error"].asString)
-                }
-                handler.error?.invoke(error)
-            }
-
+        val json = PARSER.parse(reader).asJsonObject
+        if (json["ok"].asBoolean) {
             //if there's a warning, invoke onWarning
-            json["warning"]?.let { handler.warning?.invoke(it.asString) }
-        } catch (e: Exception) {
-            e.printStackTrace()
+            json["warning"]?.let { handler?.warning?.invoke(it.asString) }
+            return json
+        } else {
+            val error: SlaKError
+            try {
+                error = SlaKError.valueOf(json["error"].asString)
+            } catch (e: Exception) {
+                error = SlaKError.UNDOCUMENTED_ERROR
+                println(json["error"].asString)
+            }
+            handler?.error?.invoke(error) ?: throw SlaKException(error)
+            json["warning"]?.let { handler?.warning?.invoke(it.asString) }
+            return JsonObject()
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return JsonObject()
+    }
+}
+
+class SlaKException(error: SlaKError) : RuntimeException("${error.name}: ${error.desc}")
+
+fun runMethod(method: String, vararg params: Pair<String, String>, cb: (JsonObject) -> Unit): ErrorHandler {
+    val handler: ErrorHandler = ErrorHandler()
+    runAsync {
+        cb(runMethodSync(method, *params, handler = handler))
     }
     return handler
 }
