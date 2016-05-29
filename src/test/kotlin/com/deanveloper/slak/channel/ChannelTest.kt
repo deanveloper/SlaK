@@ -10,6 +10,7 @@ import org.junit.Test
  */
 class ChannelTest : BaseTest() {
     @Test fun testChannel() {
+        println(Channel.list)
         assertEquals(Channel["C0PE0RP9C"], Channel["#off-topic"])
         assertEquals(Channel["C0PE0RP9C"].creator, User["@pixll"])
     }

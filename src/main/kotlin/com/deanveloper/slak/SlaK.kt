@@ -27,10 +27,6 @@ var TOKEN: String by LateInitVal()
 var BASE_URL: URI by LateInitVal()
 val PARSER = JsonParser()
 
-private fun checkDone() {
-
-}
-
 inline fun start(crossinline cb: () -> Unit) {
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         throwable.printStackTrace()

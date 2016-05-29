@@ -44,25 +44,27 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
     val handler = handler
 
     init {
+        println("initializing $name")
         this.name = if (name.startsWith('#')) name else "#$name"
 
         @Suppress("UNCHECKED_CAST")
         (this as T) //smart cast
 
-        handler.put(name, this)
+        handler.put(this.name, this)
         handler.put(id, this)
     }
 
     abstract class ChannelCompanion<T : BaseChannel<T>>(val methodBase: String) : Cacher<T>() {
-        abstract protected fun fromJson(json: JsonObject): T
+        abstract fun fromJson(json: JsonObject): T
 
         inline fun start(crossinline cb: () -> Unit): ErrorHandler {
             return runMethod("$methodBase.list", "token" to TOKEN, "exclude_archived" to "0") {
-                println("[$methodBase] callback called")
                 for (json in it["$methodBase"].asJsonArray) {
-                    println("[$methodBase] looping through array element")
-                    fromJson(json.asJsonObject) //this method never gets called
-                    println("[$methodBase] json parsed")
+                    try {
+                        fromJson(json.asJsonObject) //this method never gets called
+                    } catch(e: Throwable) {
+                        e.printStackTrace()
+                    }
                 }
 
                 cb()
@@ -139,5 +141,9 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
             json ->
             cb(json["topic"].asString)
         }
+    }
+
+    override fun toString(): String {
+        return "${javaClass.simpleName}[$id|$name]"
     }
 }
