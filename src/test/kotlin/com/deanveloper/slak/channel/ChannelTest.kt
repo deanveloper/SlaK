@@ -1,9 +1,8 @@
 package com.deanveloper.slak.channel
 
-import com.deanveloper.slak.SetupTest
 import com.deanveloper.slak.User
 import com.deanveloper.slak.util.Cacher
-import org.testng.annotations.*
+import org.testng.annotations.Test
 
 /**
  * @author Dean B

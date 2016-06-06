@@ -1,7 +1,9 @@
 package com.deanveloper.slak.channel
 
-import com.deanveloper.slak.*
-import com.deanveloper.slak.util.ErrorHandler
+import com.deanveloper.slak.User
+import com.deanveloper.slak.asTimestamp
+import com.deanveloper.slak.asUserList
+import com.deanveloper.slak.nullSafe
 import com.google.gson.JsonObject
 import java.time.LocalDateTime
 

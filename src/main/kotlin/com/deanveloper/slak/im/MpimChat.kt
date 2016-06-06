@@ -3,7 +3,6 @@ package com.deanveloper.slak.im
 import com.deanveloper.slak.*
 import com.deanveloper.slak.channel.OwnedString
 import com.deanveloper.slak.util.Cacher
-import com.deanveloper.slak.util.ErrorHandler
 import com.google.gson.JsonObject
 import java.time.LocalDateTime
 

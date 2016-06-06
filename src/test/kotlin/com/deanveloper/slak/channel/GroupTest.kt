@@ -1,6 +1,5 @@
 package com.deanveloper.slak.channel
 
-import com.deanveloper.slak.SetupTest
 import com.deanveloper.slak.User
 import org.testng.annotations.Test
 
