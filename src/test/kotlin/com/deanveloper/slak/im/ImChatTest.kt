@@ -1,17 +1,16 @@
 package com.deanveloper.slak.im
 
-import com.deanveloper.slak.BaseTest
+import com.deanveloper.slak.SetupTest
 import com.deanveloper.slak.User
 import com.deanveloper.slak.channel.Channel
-import org.junit.Assert.*
-import org.junit.Test
+import org.testng.annotations.Test
 
 /**
  * @author Dean B
  */
-class ImChatTest : BaseTest() {
+class ImChatTest {
     @Test
     fun testIm() {
-        assertEquals(ImChat[User["@dean"].id], ImChat["D18MP8E0M"])
+        assert(ImChat[User["@dean"].id] == ImChat["D18MP8E0M"])
     }
 }

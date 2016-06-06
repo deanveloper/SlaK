@@ -1,16 +1,16 @@
 package com.deanveloper.slak
 
-import org.junit.Assert.*
-import org.junit.Test
+import org.testng.annotations.Test
 
 /**
  * Tests the User class
  *
  * @author Dean B
  */
-class UserTest : BaseTest() {
-    @Test fun testUser() {
-        assertEquals(User["U0P9UTP62"], User["@adamjle"])
-        assertEquals(User["@dean"].profile.email, "deanvelopermn@gmail.com")
+class UserTest {
+    @Test
+    fun testUser() {
+        assert(User["U0P9UTP62"] == User["@adamjle"])
+        assert(User["@dean"].profile.email == "deanvelopermn@gmail.com")
     }
 }
