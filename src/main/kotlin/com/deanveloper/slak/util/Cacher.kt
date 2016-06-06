@@ -15,9 +15,15 @@ open class Cacher<V> {
 
     operator fun get(index: String): V {
         return lock.read {
-            cached[index.toLowerCase()] ?: throw RuntimeException("Index not found: $index")
+            cached[index.toLowerCase()] ?: throw IndexNotFoundException(index)
         }
     }
+
+    fun getOrDefault(index: String, default: V?): V? {
+        return cached[index.toLowerCase()] ?: default
+    }
+
+    fun getOrNull(index: String) = getOrDefault(index, null)
 
     internal fun put(index: String, value: V) = lock.write { cached.put(index.toLowerCase(), value) }
 
@@ -28,4 +34,6 @@ open class Cacher<V> {
 
     internal val values: Collection<V>
         get() = lock.read { cached.values }
+
+    class IndexNotFoundException(index: String) : RuntimeException("Index not found: $index")
 }
