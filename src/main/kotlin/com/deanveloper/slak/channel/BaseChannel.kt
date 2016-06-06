@@ -30,19 +30,24 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
 ) {
     val id = id
     var name = name
-        private set
+        internal set
     val creator = creator
     val created = created
     var archived = archived
-        private set
+        internal set
     val general = general
     var topic = topic
-        private set
+        internal set
     var purpose = purpose
-        private set
+        internal set
     var members = members
-        private set
+        internal set
     val handler = handler
+    private var _history: MutableList<Message>? = null
+    val historyLoaded: Boolean
+        get() = _history != null
+    val history: List<Message>
+        get() = _history?.toList() ?: throw HistoryNotLoadedException()
 
     init {
         this.name = if (name.startsWith('#')) name else "#$name"
@@ -86,7 +91,18 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
         }
     }
 
-    fun history(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
+    fun loadHistory(cb: (BaseChannel<T>) -> Unit) {
+        if(historyLoaded) {
+            cb(this)
+        } else {
+            historyAt {
+                _history = it.toMutableList()
+                cb(this)
+            }
+        }
+    }
+
+    @JvmOverloads fun historyAt(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
                 unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
         val params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
@@ -144,3 +160,5 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
         return "${javaClass.simpleName}[$id|$name]"
     }
 }
+
+class HistoryNotLoadedException : IllegalStateException("History has not been loaded using the loadHistory function!")
