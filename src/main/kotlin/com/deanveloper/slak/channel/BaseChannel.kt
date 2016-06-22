@@ -91,19 +91,19 @@ abstract class BaseChannel<T : BaseChannel<T>> protected constructor(
         }
     }
 
-    fun loadHistory(cb: (BaseChannel<T>) -> Unit) {
-        if(historyLoaded) {
-            cb(this)
+    fun loadHistory(cb: () -> Unit) {
+        if (historyLoaded) {
+            cb()
         } else {
             historyAt {
                 _history = it.toMutableList()
-                cb(this)
+                cb()
             }
         }
     }
 
     @JvmOverloads fun historyAt(latest: Long = -1, oldest: Long = -1, inclusive: Boolean = false, count: Int = -1,
-                unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
+                                unreads: Boolean = false, cb: (List<Message>) -> Unit): ErrorHandler {
         val params = ArrayList<Pair<String, String>>(5)
         params.add("token" to TOKEN)
         params.add("channel" to id)

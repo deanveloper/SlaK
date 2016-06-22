@@ -38,8 +38,9 @@ class ChannelTest {
     @Test(timeOut = 5000, dependsOnMethods = arrayOf("invalidHistory"))
     fun channelHistory() {
         var wait: Boolean = true
-        Channel["#off-topic"].historyAt {
-
+        val offTopic = Channel["#off-topic"]
+        offTopic.loadHistory {
+            println(offTopic.history)
             wait = false
         }
 

@@ -28,7 +28,8 @@ class Group(
             }
 
             return Group(json["id"].asString, json["name"].asString,
-                    User[json["creator"].asString], json["created"].asTimestamp, json["is_archived"]?.asBoolean ?: false,
+                    User[json["creator"].asString], json["created"].asTimestamp,
+                    json["is_archived"]?.asBoolean ?: false,
                     false, json["members"]?.asUserList ?: emptyList(),
                     if (json["topic"].nullSafe == null) OwnedString.Topic(json["topic"].asJsonObject) else null,
                     if (json["purpose"].nullSafe == null) OwnedString.Purpose(json["purpose"].asJsonObject) else null)

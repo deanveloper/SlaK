@@ -11,48 +11,34 @@ import java.util.*
  *
  * @author Dean B
  */
-class Message {
-    val type: String
-    val owner: User
-    var text: String
-    val ts: LocalDateTime
-    var starred: Boolean
-    var reactions: List<Reaction>
+data class Message(
+        val type: String,
+        val owner: User,
+        val message: String,
+        val ts: LocalDateTime,
+        val starred: Boolean = false,
+        val reactions: List<Reaction> = emptyList()
+) {
 
-    constructor(type: String,
-                owner: User,
-                message: String,
-                ts: LocalDateTime,
-                starred: Boolean = false,
-                reactions: List<Reaction> = emptyList()) {
-        this.type = type
-        this.owner = owner
-        this.text = message
-        this.ts = ts
-        this.starred = starred
-        this.reactions = reactions
-    }
-
-    constructor(json: JsonObject) {
-        this.type = (json["subtype"] ?: json["type"]).asString
-        this.owner = User[json["user"].asString]
-        this.text = json["text"].asString
-        this.ts = json["ts"].asTimestamp
-        this.starred = json["is_starred"]?.asBoolean ?: false
-
-        this.reactions = json["reactions"]?.asJsonArray?.map { it.asJsonObject }
-                ?.map {
-                    Reaction(it["name"].asString, it["users"].asJsonArray.map { User[it.asString] }.toTypedArray())
-                } ?: emptyList()
-
-    }
+    constructor(json: JsonObject) : this(
+            (json["subtype"] ?: json["type"]).asString,
+            User[json["user"].asString],
+            json["text"].asString,
+            json["ts"].asTimestamp,
+            json["is_starred"]?.asBoolean ?: false,
+            json["reactions"]?.asJsonArray?.map { it.asJsonObject }
+                    ?.map {
+                        Reaction(it["name"].asString, it["users"].asJsonArray.map { User[it.asString] }.toTypedArray())
+                    } ?: emptyList()
+    )
 
     data class Reaction(val name: String, var users: Array<User>) {
         override fun equals(other: Any?): Boolean {
-            if(other !is Reaction) return false //smart cast! :)
+            if (other !is Reaction) return false //smart cast! :)
             return name == other.name && Arrays.equals(users, other.users)
         }
+
         override fun hashCode() = name.hashCode() xor users.size
-        override fun toString() = "Reaction[name=$name,users=${users.joinToString(",")}"
+        override fun toString() = "Reaction[$name|${users.joinToString(",")}"
     }
 }
