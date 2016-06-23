@@ -1,10 +1,9 @@
 package com.deanveloper.slak.event.user
 
-import com.deanveloper.slak.User
-import java.time.LocalDateTime
+import com.deanveloper.slak.message.Message
 
-class MessageEvent(user: User, ts: LocalDateTime) : UserEvent {
-    override val name = "message"
-    override val ts = ts
-    override val user = user
+class MessageEvent(msg: Message) : UserEvent {
+    override val type = "message"
+    override val ts = msg.ts
+    override val user = msg.owner
 }

@@ -6,7 +6,7 @@ import com.deanveloper.slak.message.SlaKFile
 import java.time.LocalDateTime
 
 class FileCommentAddedEvent(comment: Comment, file: SlaKFile, ts: LocalDateTime) : FileEvent.FileCommentEvent {
-    override val name = "file_comment_added"
+    override val type = "file_comment_added"
     override val user = comment.user
     override val ts = ts
     override val file = file

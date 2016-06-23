@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 object EventHandler {
-    val handlers = HashMap<KClass<out Event>, MutableSet<(Event) -> Unit>>()
+    private val _handlers = HashMap<KClass<out Event>, MutableSet<(Event) -> Unit>>()
     val idMap = HashMap<Int, (Event) -> Unit>()
 
     /**
@@ -13,12 +13,12 @@ object EventHandler {
      *
      * @return The id of the handler (used to unregister if you want)
      */
-    fun <T : Event> register(event: KClass<T>, handler: (T) -> Unit): Int {
+    inline fun <reified T : Event> register(noinline handler: (T) -> Unit): Int {
         var id: Int = 0
         while (idMap[id] == null) {
             id++
         }
-        var list = handlers.getOrPut(event, { mutableSetOf() })
+        val list = _handlers.getOrPut(T::class, { mutableSetOf() })
         @Suppress("UNCHECKED_CAST")
         val realHandler = { e: Event -> handler(e as T) }
         list.add(realHandler)
@@ -32,12 +32,12 @@ object EventHandler {
      */
     fun unregister(event: KClass<out Event>, id: Int) {
         val handler = idMap[id]
-        handlers.getOrDefault(event, mutableSetOf()).remove(handler)
+        _handlers.getOrDefault(event, mutableSetOf()).remove(handler)
         idMap.remove(id)
     }
 
     fun callEvent(event: Event) {
-        handlers[event.javaClass.kotlin]?.forEach { it(event) }
+        _handlers[event.javaClass.kotlin]?.forEach { it(event) }
     }
 }
 
